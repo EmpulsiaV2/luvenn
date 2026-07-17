@@ -1,0 +1,17 @@
+<a href="/script/<%= s.public_id %>" class="card card-hover script-card">
+  <div class="badge-row">
+    <span class="badge badge-category"><%= s.category %></span>
+    <% if (s.featured) { %><span class="badge badge-featured"><svg class="icon"><use href="#icon-star"></use></svg>Featured</span><% } %>
+    <% if (s.has_key_system) { %><span class="badge badge-key"><svg class="icon"><use href="#icon-key"></use></svg>Key</span><% } %>
+  </div>
+  <div>
+    <h3><%= s.title %></h3>
+    <% if (s.game_name) { %><div class="game"><%= s.game_name %></div><% } %>
+  </div>
+  <p class="desc"><%= s.description ? s.description : 'No description provided.' %></p>
+  <div class="meta">
+    <span><svg class="icon"><use href="#icon-user"></use></svg><%= s.username %></span>
+    <span><svg class="icon"><use href="#icon-eye"></use></svg><%= s.views %></span>
+    <span><svg class="icon"><use href="#icon-download"></use></svg><%= s.fetches %></span>
+  </div>
+</a>

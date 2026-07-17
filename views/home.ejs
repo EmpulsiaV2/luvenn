@@ -1,0 +1,76 @@
+<%- include('partials/head') %>
+<main>
+  <section class="hero">
+    <div class="container">
+      <h1>Roblox scripts,<br>built for <span class="accent">executors</span>.</h1>
+      <p>Publish your own scripts, browse what the community is building, and pull any of it straight into your executor with a single loadstring.</p>
+
+      <div class="hero-actions">
+        <% if (!user) { %>
+          <a href="/register" class="btn btn-primary">
+            <svg class="icon"><use href="#icon-user"></use></svg>Create account
+          </a>
+        <% } else { %>
+          <a href="/dashboard/new" class="btn btn-primary">
+            <svg class="icon"><use href="#icon-plus"></use></svg>Publish a script
+          </a>
+        <% } %>
+        <a href="#browse" class="btn btn-outline">
+          <svg class="icon"><use href="#icon-script"></use></svg>Browse scripts
+        </a>
+      </div>
+
+      <form class="search-bar" action="/" method="GET">
+        <svg class="icon"><use href="#icon-search"></use></svg>
+        <input type="text" name="q" value="<%= search %>" placeholder="Search by script or game name...">
+        <% if (category) { %><input type="hidden" name="category" value="<%= category %>"><% } %>
+      </form>
+
+      <div class="pills">
+        <a href="/?<%= search ? 'q=' + encodeURIComponent(search) + '&' : '' %>" class="pill <%= !category ? 'active' : '' %>">All</a>
+        <% categories.forEach(function(c) { %>
+          <a href="/?category=<%= c %><%= search ? '&q=' + encodeURIComponent(search) : '' %>" class="pill <%= category === c ? 'active' : '' %>"><%= c %></a>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <% if (featured.length && !search && !category) { %>
+  <section class="section">
+    <div class="container">
+      <div class="section-title">
+        <h2><svg class="icon" style="color:var(--blue)"><use href="#icon-star"></use></svg>&nbsp; Featured</h2>
+        <span class="sub">Hand-picked by the luvenn team</span>
+      </div>
+      <div class="grid">
+        <% featured.forEach(function(s) { %>
+          <%- include('partials/script_card', { s: s, timeAgo: timeAgo }) %>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
+  <section class="section" id="browse">
+    <div class="container">
+      <div class="section-title">
+        <h2>Browse scripts</h2>
+        <span class="sub"><%= scripts.length %> result<%= scripts.length === 1 ? '' : 's' %></span>
+      </div>
+
+      <% if (scripts.length === 0) { %>
+        <div class="empty-state">
+          <svg class="icon"><use href="#icon-script"></use></svg>
+          <p>No scripts found. <% if (search || category) { %>Try a different search.<% } else { %>Be the first to publish one.<% } %></p>
+        </div>
+      <% } else { %>
+        <div class="grid">
+          <% scripts.forEach(function(s) { %>
+            <%- include('partials/script_card', { s: s, timeAgo: timeAgo }) %>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+  </section>
+</main>
+<%- include('partials/footer') %>

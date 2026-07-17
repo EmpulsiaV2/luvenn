@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> · <%= siteName %> admin</title>
+  <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<%- include('sprite') %>
+<div class="admin-shell">
+
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <div class="mark"><svg class="icon"><use href="#icon-shield"></use></svg></div>
+      <div>
+        <div class="name"><%= siteName %> Admin</div>
+        <div class="subname">Control Panel</div>
+      </div>
+    </div>
+
+    <nav style="flex:1">
+      <div class="admin-nav-group">
+        <div class="admin-nav-label">Overview</div>
+        <a href="/admin" class="admin-nav-item <%= active === 'overview' ? 'active' : '' %>">
+          <svg class="icon"><use href="#icon-dashboard"></use></svg><span class="label">Overview</span>
+        </a>
+      </div>
+
+      <div class="admin-nav-group">
+        <div class="admin-nav-label">Scripts</div>
+        <a href="/admin/scripts" class="admin-nav-item <%= active === 'scripts' ? 'active' : '' %>">
+          <svg class="icon"><use href="#icon-script"></use></svg><span class="label">All scripts</span>
+          <span class="count"><%= navCounts.scripts %></span>
+        </a>
+        <a href="/admin/scripts?filter=key" class="admin-nav-item">
+          <svg class="icon"><use href="#icon-key"></use></svg><span class="label">Key scripts</span>
+          <span class="count"><%= navCounts.key_scripts %></span>
+        </a>
+      </div>
+
+      <div class="admin-nav-group">
+        <div class="admin-nav-label">Community</div>
+        <a href="/admin/users" class="admin-nav-item <%= active === 'users' ? 'active' : '' %>">
+          <svg class="icon"><use href="#icon-user"></use></svg><span class="label">Users</span>
+          <span class="count"><%= navCounts.users %></span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="admin-sidebar-foot">
+      <a href="/" class="btn btn-outline btn-sm btn-block"><svg class="icon"><use href="#icon-external"></use></svg>View site</a>
+      <form action="/logout" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="btn btn-danger btn-sm btn-block"><svg class="icon"><use href="#icon-x"></use></svg>Log out</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-breadcrumb">
+        <span>Dashboard</span> <svg class="icon" style="width:12px;height:12px"><use href="#icon-arrow-right"></use></svg> <strong><%= title %></strong>
+      </div>
+      <div class="admin-topbar-right">
+        <span class="admin-clock" id="admin-clock"><svg class="icon"><use href="#icon-clock"></use></svg><span id="admin-clock-text">--:--:--</span></span>
+      </div>
+    </div>
+
+    <div class="admin-content">

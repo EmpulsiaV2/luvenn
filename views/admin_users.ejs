@@ -1,0 +1,45 @@
+<%- include('partials/admin_head') %>
+      <h1>Users</h1>
+      <p class="lead">Everyone with an account on luvenn.</p>
+
+      <div class="admin-tabs mt-24">
+        <a href="/admin/users" class="admin-tab <%= filter === 'all' ? 'active' : '' %>">All <span class="count">· <%= counts.all_count %></span></a>
+        <a href="/admin/users?filter=admins" class="admin-tab <%= filter === 'admins' ? 'active' : '' %>">Admins <span class="count">· <%= counts.admin_count %></span></a>
+        <a href="/admin/users?filter=banned" class="admin-tab <%= filter === 'banned' ? 'active' : '' %>">Banned <span class="count">· <%= counts.banned_count %></span></a>
+      </div>
+
+      <div class="table-wrap mb-24">
+        <table>
+          <thead><tr><th>Username</th><th>Email</th><th>Scripts</th><th>Role</th><th>Joined</th><th></th></tr></thead>
+          <tbody>
+            <% users.forEach(function(u) { %>
+              <tr>
+                <td style="font-weight:600"><%= u.username %></td>
+                <td class="text-dim"><%= u.email %></td>
+                <td><%= u.script_count %></td>
+                <td>
+                  <% if (u.is_admin) { %><span class="badge badge-admin"><svg class="icon"><use href="#icon-shield"></use></svg>Admin</span><% } %>
+                  <% if (u.is_banned) { %><span class="badge badge-banned"><svg class="icon"><use href="#icon-ban"></use></svg>Banned</span><% } %>
+                  <% if (!u.is_admin && !u.is_banned) { %><span class="text-faint">Member</span><% } %>
+                </td>
+                <td class="text-faint"><%= timeAgo(u.created_at) %></td>
+                <td>
+                  <% if (!u.is_admin) { %>
+                    <form action="/admin/users/<%= u.id %>/ban" method="POST" data-confirm="<%= u.is_banned ? 'Unban' : 'Ban' %> <%= u.username %>?">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button type="submit" class="btn <%= u.is_banned ? 'btn-outline' : 'btn-danger' %> btn-sm">
+                        <svg class="icon"><use href="#icon-ban"></use></svg><%= u.is_banned ? 'Unban' : 'Ban' %>
+                      </button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+            <% if (users.length === 0) { %>
+              <tr><td colspan="6" class="text-faint center" style="padding:30px">No users in this view.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-faint" style="font-size:12.5px">Admin status is granted by setting <code>is_admin = TRUE</code> directly in the database — there's no in-app promotion, by design.</p>
+<%- include('partials/admin_foot') %>

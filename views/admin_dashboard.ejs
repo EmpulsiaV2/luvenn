@@ -1,0 +1,77 @@
+<%- include('partials/admin_head') %>
+      <h1>Overview</h1>
+      <p class="lead">Your hub at a glance.</p>
+
+      <div class="stat-tiles">
+        <div class="stat-tile">
+          <div class="stat-chip c-blue"><svg class="icon"><use href="#icon-layers"></use></svg></div>
+          <div><div class="num"><%= stats.script_count %></div><div class="label">Total scripts</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-green"><svg class="icon"><use href="#icon-check"></use></svg></div>
+          <div><div class="num"><%= stats.published_count %></div><div class="label">Published</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-amber"><svg class="icon"><use href="#icon-list"></use></svg></div>
+          <div><div class="num"><%= stats.pending_count %></div><div class="label">Pending review</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-violet"><svg class="icon"><use href="#icon-key"></use></svg></div>
+          <div><div class="num"><%= stats.key_count %></div><div class="label">Key scripts</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-rose"><svg class="icon"><use href="#icon-user"></use></svg></div>
+          <div><div class="num"><%= stats.user_count %></div><div class="label">Members</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-blue"><svg class="icon"><use href="#icon-download"></use></svg></div>
+          <div><div class="num"><%= stats.total_fetches %></div><div class="label">Executor fetches</div></div>
+        </div>
+      </div>
+
+      <div class="admin-panels">
+        <div class="admin-panel">
+          <div class="admin-panel-head">
+            <h3><svg class="icon"><use href="#icon-script"></use></svg>Recent scripts</h3>
+            <a href="/admin/scripts" class="sub" style="font-size:12.5px">View all →</a>
+          </div>
+          <% scripts.forEach(function(s) { %>
+            <a href="/script/<%= s.public_id %>" class="admin-list-row" style="color:inherit">
+              <span class="row-title"><span class="dot" style="background:<%= s.status === 'published' ? 'var(--success)' : (s.status === 'pending' ? '#ffb020' : 'var(--danger)') %>"></span><%= s.title %></span>
+              <span class="row-sub"><%= s.username %></span>
+            </a>
+          <% }); %>
+          <% if (scripts.length === 0) { %><div class="admin-list-row text-faint">No scripts yet.</div><% } %>
+        </div>
+
+        <div class="admin-panel">
+          <div class="admin-panel-head">
+            <h3><svg class="icon"><use href="#icon-user"></use></svg>Recent users</h3>
+            <a href="/admin/users" class="sub" style="font-size:12.5px">View all →</a>
+          </div>
+          <% users.forEach(function(u) { %>
+            <div class="admin-list-row">
+              <span class="row-title"><span class="dot" style="background:<%= u.is_banned ? 'var(--danger)' : 'var(--success)' %>"></span><%= u.username %></span>
+              <span class="row-sub"><%= u.is_admin ? 'Admin' : timeAgo(u.created_at) %></span>
+            </div>
+          <% }); %>
+          <% if (users.length === 0) { %><div class="admin-list-row text-faint">No users yet.</div><% } %>
+        </div>
+      </div>
+
+      <div class="section-title"><h2 style="font-size:15px"><svg class="icon" style="width:15px;height:15px;color:#ffb020;vertical-align:-2px"><use href="#icon-bolt"></use></svg> Quick actions</h2></div>
+      <div class="quick-actions">
+        <a href="/admin/scripts?filter=pending" class="quick-action">
+          <div class="icon-wrap"><svg class="icon"><use href="#icon-list"></use></svg></div>Review pending
+        </a>
+        <a href="/admin/scripts?filter=key" class="quick-action">
+          <div class="icon-wrap"><svg class="icon"><use href="#icon-key"></use></svg></div>Key scripts
+        </a>
+        <a href="/admin/users?filter=banned" class="quick-action">
+          <div class="icon-wrap"><svg class="icon"><use href="#icon-ban"></use></svg></div>Banned users
+        </a>
+        <a href="/" class="quick-action">
+          <div class="icon-wrap"><svg class="icon"><use href="#icon-external"></use></svg></div>View site
+        </a>
+      </div>
+<%- include('partials/admin_foot') %>

@@ -1,0 +1,59 @@
+<%- include('partials/admin_head') %>
+      <h1>Scripts</h1>
+      <p class="lead">Moderate everything published to the platform.</p>
+
+      <div class="admin-tabs mt-24">
+        <a href="/admin/scripts" class="admin-tab <%= filter === 'all' ? 'active' : '' %>">All <span class="count">· <%= counts.all_count %></span></a>
+        <a href="/admin/scripts?filter=published" class="admin-tab <%= filter === 'published' ? 'active' : '' %>">Published <span class="count">· <%= counts.published_count %></span></a>
+        <a href="/admin/scripts?filter=pending" class="admin-tab <%= filter === 'pending' ? 'active' : '' %>">Pending <span class="count">· <%= counts.pending_count %></span></a>
+        <a href="/admin/scripts?filter=key" class="admin-tab <%= filter === 'key' ? 'active' : '' %>">Key system <span class="count">· <%= counts.key_count %></span></a>
+        <a href="/admin/scripts?filter=removed" class="admin-tab <%= filter === 'removed' ? 'active' : '' %>">Removed</a>
+      </div>
+
+      <div class="table-wrap mb-24">
+        <table>
+          <thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Status</th><th>Views</th><th>Fetches</th><th></th></tr></thead>
+          <tbody>
+            <% scripts.forEach(function(s) { %>
+              <tr>
+                <td><a href="/script/<%= s.public_id %>" style="font-weight:600"><%= s.title %></a> <% if (s.has_key_system) { %><svg class="icon" style="width:12px;height:12px;color:#ffc107;margin-left:4px"><use href="#icon-key"></use></svg><% } %></td>
+                <td class="text-dim"><%= s.username %></td>
+                <td class="text-dim"><%= s.category %></td>
+                <td><span class="badge badge-<%= s.status %>"><%= s.status %></span></td>
+                <td><%= s.views %></td>
+                <td><%= s.fetches %></td>
+                <td>
+                  <div class="row-actions">
+                    <form action="/admin/scripts/<%= s.id %>/feature" method="POST">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button type="submit" class="btn btn-outline btn-sm" title="Toggle featured"><svg class="icon"><use href="#icon-star"></use></svg></button>
+                    </form>
+                    <% if (s.status !== 'published') { %>
+                      <form action="/admin/scripts/<%= s.id %>/status" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <input type="hidden" name="status" value="published">
+                        <button type="submit" class="btn btn-outline btn-sm" title="Approve"><svg class="icon"><use href="#icon-check"></use></svg></button>
+                      </form>
+                    <% } %>
+                    <% if (s.status !== 'removed') { %>
+                      <form action="/admin/scripts/<%= s.id %>/status" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <input type="hidden" name="status" value="removed">
+                        <button type="submit" class="btn btn-outline btn-sm" title="Take down"><svg class="icon"><use href="#icon-x"></use></svg></button>
+                      </form>
+                    <% } %>
+                    <form action="/admin/scripts/<%= s.id %>/delete" method="POST" data-confirm="Permanently delete '<%= s.title %>'?">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button type="submit" class="btn btn-danger btn-sm"><svg class="icon"><use href="#icon-trash"></use></svg></button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+            <% if (scripts.length === 0) { %>
+              <tr><td colspan="7" class="text-faint center" style="padding:30px">No scripts in this view.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+<%- include('partials/admin_foot') %>

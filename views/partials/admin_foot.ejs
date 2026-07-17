@@ -1,0 +1,15 @@
+    </div>
+  </div>
+</div>
+<script src="/js/main.js"></script>
+<script>
+  function tickAdminClock() {
+    const el = document.getElementById('admin-clock-text');
+    if (!el) return;
+    el.textContent = new Date().toLocaleTimeString('en-GB', { hour12: false });
+  }
+  tickAdminClock();
+  setInterval(tickAdminClock, 1000);
+</script>
+</body>
+</html>

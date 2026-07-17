@@ -1,0 +1,54 @@
+<%- include('partials/head') %>
+<main>
+  <div class="container" style="padding-top:36px">
+    <div class="section-title">
+      <div>
+        <h1 style="font-size:26px">Your scripts</h1>
+        <p class="text-dim" style="margin-top:4px">Manage everything you've published to luvenn.</p>
+      </div>
+      <a href="/dashboard/new" class="btn btn-primary"><svg class="icon"><use href="#icon-plus"></use></svg>Publish new</a>
+    </div>
+
+    <% if (scripts.length === 0) { %>
+      <div class="empty-state">
+        <svg class="icon"><use href="#icon-script"></use></svg>
+        <p>You haven't published any scripts yet.</p>
+        <a href="/dashboard/new" class="btn btn-primary" style="margin-top:14px"><svg class="icon"><use href="#icon-plus"></use></svg>Publish your first script</a>
+      </div>
+    <% } else { %>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Title</th><th>Category</th><th>Status</th><th>Views</th><th>Fetches</th><th>Published</th><th></th></tr>
+          </thead>
+          <tbody>
+            <% scripts.forEach(function(s) { %>
+              <tr>
+                <td><a href="/script/<%= s.public_id %>" style="font-weight:600"><%= s.title %></a></td>
+                <td class="text-dim"><%= s.category %></td>
+                <td><span class="badge badge-<%= s.status %>"><%= s.status %></span></td>
+                <td><%= s.views %></td>
+                <td><%= s.fetches %></td>
+                <td class="text-faint"><%= timeAgo(s.created_at) %></td>
+                <td>
+                  <div class="row-actions">
+                    <a href="/dashboard/edit/<%= s.id %>" class="btn btn-outline btn-sm"><svg class="icon"><use href="#icon-edit"></use></svg></a>
+                    <form action="/dashboard/toggle-status/<%= s.id %>" method="POST">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button type="submit" class="btn btn-outline btn-sm"><%= s.status === 'published' ? 'Unpublish' : 'Publish' %></button>
+                    </form>
+                    <form action="/dashboard/delete/<%= s.id %>" method="POST" data-confirm="Delete '<%= s.title %>' permanently?">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button type="submit" class="btn btn-danger btn-sm"><svg class="icon"><use href="#icon-trash"></use></svg></button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</main>
+<%- include('partials/footer') %>
