@@ -68,6 +68,21 @@
         </div>
       </div>
 
+      <% if (topScripts.length > 0 && topScripts.some(s => s.fetches > 0)) { %>
+      <div class="dash-panel">
+        <div class="dash-panel-head">
+          <h3><svg class="icon"><use href="#icon-layers"></use></svg>Top scripts</h3>
+          <span class="sub" style="font-size:12px;color:var(--text-faint)">by executions</span>
+        </div>
+        <% topScripts.forEach(function(s, i) { %>
+          <a href="/script/<%= s.public_id %>" class="dash-list-row" style="color:inherit">
+            <span class="row-title"><span class="rank"><%= i + 1 %></span><%= s.title %></span>
+            <span class="row-sub"><svg class="icon"><use href="#icon-layers"></use></svg><%= s.fetches %> executions</span>
+          </a>
+        <% }); %>
+      </div>
+      <% } %>
+
       <div class="dash-panel">
         <div class="dash-scripts-head">
           <div class="id-line">
@@ -112,6 +127,9 @@
                     <td>
                       <div class="row-actions">
                         <button class="btn btn-outline-success btn-sm" data-copy="<%= loadstring %>"><svg class="icon"><use href="#icon-download"></use></svg>Loader</button>
+                        <% if (s.has_key_system) { %>
+                          <a href="/dashboard/keys" class="btn btn-outline btn-sm"><svg class="icon"><use href="#icon-key"></use></svg>Keys</a>
+                        <% } %>
                         <a href="/dashboard/edit/<%= s.id %>" class="btn btn-blue btn-sm"><svg class="icon"><use href="#icon-edit"></use></svg>Edit</a>
                         <form action="/dashboard/delete/<%= s.id %>" method="POST" data-confirm="Delete '<%= s.title %>' permanently?">
                           <input type="hidden" name="_csrf" value="<%= csrfToken %>">

@@ -5,6 +5,7 @@ const { requireAuth } = require('../middleware/auth');
 const { publishLimiter, authLimiter } = require('../middleware/security');
 const { generatePublicId, CATEGORIES, timeAgo, bumpPatchVersion } = require('../utils');
 const { obfuscate } = require('../lib/obfuscate');
+const { buildKeyCheckPreamble } = require('../lib/keyCheck');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -63,11 +64,13 @@ router.get('/dashboard', async (req, res, next) => {
 
     const series = await buildExecutionSeries(req.user.id);
     const monthTotal = series.reduce((sum, p) => sum + p.count, 0);
+    const topScripts = [...scripts].sort((a, b) => b.fetches - a.fetches).slice(0, 5);
 
     res.render('account_dashboard', {
       title: 'Dashboard',
       stats: statRows[0],
       scripts,
+      topScripts,
       series,
       monthTotal,
       timeAgo,
@@ -110,7 +113,11 @@ router.post('/dashboard/new', publishLimiter, async (req, res, next) => {
       publicId = generatePublicId();
     }
 
-    const protectedCode = obfuscate(data.code);
+    const protectedCode = obfuscate(
+      data.hasKeySystem
+        ? buildKeyCheckPreamble(process.env.SITE_URL || 'https://luvenn.xyz', publicId) + '\n' + data.code
+        : data.code
+    );
 
     await query(
       `INSERT INTO scripts (public_id, user_id, title, description, game_name, game_id, category, code, protected_code, version, has_key_system, key_link)
@@ -153,7 +160,11 @@ router.post('/dashboard/edit/:id', loadOwnedScript, async (req, res, next) => {
       return res.render('script_form', { title: 'Edit script', mode: 'edit', script: { ...req.script, ...req.body }, error: 'Script code cannot be empty.', categories: CATEGORIES });
     }
 
-    const protectedCode = obfuscate(data.code);
+    const protectedCode = obfuscate(
+      data.hasKeySystem
+        ? buildKeyCheckPreamble(process.env.SITE_URL || 'https://luvenn.xyz', req.script.public_id) + '\n' + data.code
+        : data.code
+    );
     const newVersion = bumpPatchVersion(req.script.version);
 
     await query(

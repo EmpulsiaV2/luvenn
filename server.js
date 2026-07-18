@@ -14,11 +14,19 @@ const { generalLimiter } = require('./middleware/security');
 const authRoutes = require('./routes/auth');
 const scriptRoutes = require('./routes/scripts');
 const dashboardRoutes = require('./routes/dashboard');
+const keyRoutes = require('./routes/keys');
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
 
-if (process.env.TRUST_PROXY) app.set('trust proxy', Number(process.env.TRUST_PROXY) || 1);
+// Behind Vercel (or any reverse proxy), trust proxy must be on for secure
+// cookies and session handling to behave correctly — this was previously
+// gated behind an easy-to-forget TRUST_PROXY env var, which is the most
+// likely cause of session/CSRF failures (e.g. 403 on POST /login) on a
+// default Vercel deployment. Always trust the proxy in production.
+if (isProd || process.env.TRUST_PROXY) {
+  app.set('trust proxy', Number(process.env.TRUST_PROXY) || 1);
+}
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -84,6 +92,7 @@ app.use(csrfProtect);
 app.use(scriptRoutes);
 app.use(authRoutes);
 app.use(dashboardRoutes);
+app.use(keyRoutes);
 
 app.use((req, res) => {
   res.status(404).render('error', { title: 'Not found', message: "This page doesn't exist." });
@@ -98,6 +107,16 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`[luvenn] Running on http://localhost:${PORT}`);
-});
+
+// Traditional hosts (Render, Railway, Fly, a VPS, `npm start` locally) run
+// this file directly, so it should bind and listen. Vercel instead imports
+// this module as a serverless function and calls the exported app itself —
+// calling listen() there does nothing harmful, but isn't what serves
+// requests, so we only do it when this file is the actual entry point.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`[luvenn] Running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

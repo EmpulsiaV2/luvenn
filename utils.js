@@ -53,6 +53,13 @@ function bumpPatchVersion(version) {
   return parts.join('.');
 }
 
+// Real access keys, e.g. LUVENN-8F2K-93QZ-4RXT
+const KEY_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I ambiguity
+function generateAccessKey() {
+  const group = () => Array.from({ length: 4 }, () => KEY_ALPHABET[crypto.randomInt(KEY_ALPHABET.length)]).join('');
+  return `LUVENN-${group()}-${group()}-${group()}`;
+}
+
 const CATEGORIES = ['universal', 'game-specific', 'gui', 'admin', 'other'];
 
 module.exports = {
@@ -62,5 +69,6 @@ module.exports = {
   looksLikeBrowser,
   timeAgo,
   bumpPatchVersion,
+  generateAccessKey,
   CATEGORIES,
 };

@@ -4,17 +4,18 @@
 }
 
 :root {
-  --bg: #0a0e1a;
-  --bg-elevated: #0f1526;
-  --bg-card: #131b30;
-  --border: #232e4d;
-  --border-soft: #182036;
-  --text: #eef1fb;
-  --text-dim: #9aa3c2;
-  --text-faint: #5c6788;
-  --gold: #e8c14a;
-  --gold-dim: #b8963a;
-  --gold-glow: rgba(232, 193, 74, 0.15);
+  --bg: #0b0710;
+  --bg-elevated: #130d1e;
+  --bg-card: #181125;
+  --border: #2b2040;
+  --border-soft: #1e1630;
+  --text: #f1edf9;
+  --text-dim: #a89bc4;
+  --text-faint: #6b5f89;
+  /* Primary brand accent — named --gold for historical reasons, now a vivid violet. */
+  --gold: #a855f7;
+  --gold-dim: #7c3aed;
+  --gold-glow: rgba(168, 85, 247, 0.18);
   --blue: #4d8dff;
   --blue-dim: #2f5cb0;
   --blue-glow: rgba(77, 141, 255, 0.15);
@@ -40,8 +41,8 @@ html, body {
 
 body {
   background-image:
-    radial-gradient(circle at 15% 0%, rgba(232,193,74,0.06), transparent 40%),
-    radial-gradient(circle at 85% 15%, rgba(232,193,74,0.04), transparent 35%);
+    radial-gradient(circle at 15% 0%, rgba(168,85,247,0.08), transparent 40%),
+    radial-gradient(circle at 85% 15%, rgba(168,85,247,0.05), transparent 35%);
   background-attachment: fixed;
   min-height: 100vh;
   display: flex;
@@ -102,8 +103,8 @@ main { flex: 1; }
   line-height: 1;
 }
 .btn .icon { width: 15px; height: 15px; }
-.btn-primary { background: var(--gold); color: #14100a; box-shadow: 0 4px 14px rgba(232,193,74,0.28); }
-.btn-primary:hover { background: #f3d876; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232,193,74,0.38); }
+.btn-primary { background: var(--gold); color: #fdfaff; box-shadow: 0 4px 14px rgba(168,85,247,0.35); }
+.btn-primary:hover { background: #bf7cfa; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(168,85,247,0.45); }
 .btn-outline { background: transparent; border-color: var(--border); color: var(--text); }
 .btn-outline:hover { border-color: var(--gold-dim); background: var(--gold-glow); }
 .btn-ghost { background: transparent; color: var(--text-dim); }

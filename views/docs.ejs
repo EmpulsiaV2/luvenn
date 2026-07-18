@@ -23,9 +23,15 @@
       <p>Your dashboard shows total views, total executions, scripts protected, and blocked fetch attempts, plus a 30-day execution chart, updated in real time as your loader link is used.</p>
     </div>
 
-    <div class="card">
+    <div class="card mb-24">
       <h3 style="font-size:16px;margin-bottom:10px">4. Editing a published script</h3>
       <p>Source is stored so only you can edit it later &mdash; it's never shown anywhere else on the site, including to other visitors. Every save bumps the script's version number and regenerates a brand new protected loader.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:16px;margin-bottom:10px">5. Key-protected scripts</h3>
+      <p>Enable "This script requires a key" and every published loader embeds a real key check &mdash; obfuscated along with the rest of your script, not a separate visible step. End users set <code>_G.Key</code> before running the loadstring; the loader validates it against your account's keys at runtime.</p>
+      <p style="margin-top:10px">Generate keys yourself from <a href="/dashboard/keys" style="color:var(--gold)">Keys</a> with a custom expiry, or share your script's <code>/key/&lt;id&gt;</code> page so people can self-serve a 24-hour key without an account.</p>
     </div>
   </div>
 </main>

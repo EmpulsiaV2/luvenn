@@ -29,6 +29,16 @@
       </div>
 
       <div class="dash-nav-group">
+        <div class="dash-nav-label">Key system</div>
+        <a href="/dashboard/key-scripts" class="dash-nav-item <%= path === '/dashboard/key-scripts' ? 'active' : '' %>">
+          <svg class="icon"><use href="#icon-shield"></use></svg><span class="label">Key scripts</span>
+        </a>
+        <a href="/dashboard/keys" class="dash-nav-item <%= path === '/dashboard/keys' ? 'active' : '' %>">
+          <svg class="icon"><use href="#icon-key"></use></svg><span class="label">Keys</span>
+        </a>
+      </div>
+
+      <div class="dash-nav-group">
         <div class="dash-nav-label">Account</div>
         <a href="/dashboard/profile" class="dash-nav-item <%= path === '/dashboard/profile' ? 'active' : '' %>">
           <svg class="icon"><use href="#icon-user"></use></svg><span class="label">Profile</span>

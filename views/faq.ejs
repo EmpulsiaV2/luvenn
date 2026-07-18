@@ -24,6 +24,11 @@
       <p>Yes, any time, from your dashboard. Each save regenerates the protected output and bumps the version number.</p>
     </div>
 
+    <div class="card mb-24">
+      <h3 style="font-size:15.5px;margin-bottom:8px">How does the key system actually work?</h3>
+      <p>When key protection is on, a real validation check is compiled into your obfuscated loader itself. End users set <code>_G.Key</code> to a key you (or they, via your script's self-serve <code>/key/&lt;id&gt;</code> page) generated, then run the loadstring. The loader calls our own <code>/api/keys/validate</code> endpoint at runtime and only continues if the key is active and unexpired.</p>
+    </div>
+
     <div class="card">
       <h3 style="font-size:15.5px;margin-bottom:8px">Is there a paid tier?</h3>
       <p>No, publishing on luvenn is free.</p>

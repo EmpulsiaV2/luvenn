@@ -1,0 +1,35 @@
+<%- include('partials/head') %>
+<main>
+  <div class="auth-wrap">
+    <h1><svg class="icon" style="color:var(--gold);width:22px;height:22px;vertical-align:-3px"><use href="#icon-key"></use></svg>&nbsp; Get your key</h1>
+    <p class="sub"><%= script.title %> requires a key. Generate one below, then set it before running the loader.</p>
+
+    <% if (generatedKey) { %>
+      <div class="alert alert-success">
+        <svg class="icon"><use href="#icon-check"></use></svg>
+        Your key is valid for 24 hours.
+      </div>
+      <div class="loadstring-box mb-24">
+        <span><%= generatedKey %></span>
+        <button class="btn btn-outline btn-sm" data-copy="<%= generatedKey %>" style="flex-shrink:0">
+          <svg class="icon"><use href="#icon-copy"></use></svg>Copy
+        </button>
+      </div>
+      <div class="card">
+        <h3 style="font-size:14px;margin-bottom:10px">How to use it</h3>
+        <p style="font-size:13px;margin-bottom:10px">Run this in your executor before the loadstring:</p>
+        <div class="loadstring-box" style="margin-bottom:10px">
+          <span>_G.Key = "<%= generatedKey %>"</span>
+        </div>
+        <p style="font-size:13px">Then run the script's loadstring as usual.</p>
+      </div>
+    <% } else { %>
+      <form action="/key/<%= script.public_id %>/generate" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="btn btn-primary btn-block"><svg class="icon"><use href="#icon-key"></use></svg>Generate my key</button>
+      </form>
+      <p class="text-faint" style="font-size:12.5px;margin-top:14px;text-align:center">Keys generated here last 24 hours. No account required.</p>
+    <% } %>
+  </div>
+</main>
+<%- include('partials/footer') %>

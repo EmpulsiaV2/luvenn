@@ -34,9 +34,30 @@ const rawFetchLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Self-serve key generation (public /key/:id page) — generous but bounded,
+// to stop someone scripting mass key creation.
+const keyGenLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many keys requested. Please try again later.' },
+});
+
+// Runtime key validation — hit by the obfuscated loader itself every time
+// a key-protected script runs, so this needs real headroom.
+const keyValidateLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 module.exports = {
   authLimiter,
   publishLimiter,
   generalLimiter,
   rawFetchLimiter,
+  keyGenLimiter,
+  keyValidateLimiter,
 };

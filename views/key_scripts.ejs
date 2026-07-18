@@ -1,0 +1,39 @@
+<%- include('partials/account_head') %>
+      <h1>Key scripts</h1>
+      <p class="lead">Scripts that require a key before they'll run.</p>
+
+      <% if (scripts.length === 0) { %>
+        <div class="dash-empty">
+          <svg class="icon"><use href="#icon-shield"></use></svg>
+          <p>No key-protected scripts yet.</p>
+          <p style="font-size:12.5px;margin-top:4px">Enable "This script requires a key" when publishing or editing a script.</p>
+          <a href="/dashboard/new?key=1" class="btn btn-primary btn-sm" style="margin-top:14px"><svg class="icon"><use href="#icon-plus"></use></svg>Add a key script</a>
+        </div>
+      <% } else { %>
+        <div class="table-wrap mb-24">
+          <table>
+            <thead><tr><th>Script</th><th>Status</th><th>Active keys</th><th>Total keys issued</th><th></th></tr></thead>
+            <tbody>
+              <% scripts.forEach(function(s) { %>
+                <tr>
+                  <td><a href="/script/<%= s.public_id %>" style="font-weight:600"><%= s.title %></a></td>
+                  <td>
+                    <% if (s.status === 'published') { %><span class="badge badge-published">Active</span>
+                    <% } else { %><span class="badge badge-pending">Draft</span><% } %>
+                  </td>
+                  <td><%= s.active_key_count %></td>
+                  <td><%= s.key_count %></td>
+                  <td>
+                    <div class="row-actions">
+                      <a href="/key/<%= s.public_id %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-success btn-sm"><svg class="icon"><use href="#icon-external"></use></svg>Get-key page</a>
+                      <a href="/dashboard/keys" class="btn btn-blue btn-sm"><svg class="icon"><use href="#icon-key"></use></svg>Manage keys</a>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-faint" style="font-size:12.5px">Share a script's "Get-key page" link with people who need access — they can generate their own 24-hour key there, no login required. You can also generate keys yourself with custom expiry from the <a href="/dashboard/keys" style="color:var(--gold)">Keys</a> page.</p>
+      <% } %>
+<%- include('partials/account_foot') %>

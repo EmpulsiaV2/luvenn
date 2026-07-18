@@ -1,0 +1,78 @@
+<%- include('partials/account_head') %>
+      <h1>Keys</h1>
+      <p class="lead">Every key issued for your key-protected scripts.</p>
+
+      <% if (keyScripts.length === 0) { %>
+        <div class="alert" style="background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-dim)" >
+          <svg class="icon"><use href="#icon-shield"></use></svg>
+          You don't have any key-protected scripts yet. Enable "This script requires a key" on a script to start issuing keys.
+        </div>
+      <% } else { %>
+        <div class="card mt-24 mb-24" style="max-width:640px">
+          <h3 style="font-size:15px;margin-bottom:14px">Generate a key</h3>
+          <form action="/dashboard/keys/generate" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="form-group">
+              <label for="script_id">Script</label>
+              <select id="script_id" name="script_id" required>
+                <% keyScripts.forEach(function(s) { %>
+                  <option value="<%= s.id %>"><%= s.title %></option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="flex gap-12">
+              <div class="form-group" style="flex:1">
+                <label for="expires">Expires</label>
+                <select id="expires" name="expires">
+                  <option value="never">Never</option>
+                  <option value="1d">1 day</option>
+                  <option value="7d" selected>7 days</option>
+                  <option value="30d">30 days</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex:1">
+                <label for="note">Note (optional)</label>
+                <input type="text" id="note" name="note" maxlength="120" placeholder="e.g. for @someone">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block"><svg class="icon"><use href="#icon-key"></use></svg>Generate key</button>
+          </form>
+        </div>
+      <% } %>
+
+      <% if (keys.length === 0) { %>
+        <div class="dash-empty">
+          <svg class="icon"><use href="#icon-key"></use></svg>
+          <p>No keys issued yet.</p>
+        </div>
+      <% } else { %>
+        <div class="table-wrap mb-24">
+          <table>
+            <thead><tr><th>Key</th><th>Script</th><th>Status</th><th>Uses</th><th>Expires</th><th>Note</th><th></th></tr></thead>
+            <tbody>
+              <% keys.forEach(function(k) { %>
+                <tr>
+                  <td class="mono"><%= k.key_value %></td>
+                  <td><a href="/script/<%= k.script_public_id %>"><%= k.script_title %></a></td>
+                  <td>
+                    <% const expired = k.expires_at && new Date(k.expires_at) < new Date(); %>
+                    <% if (k.status === 'revoked') { %><span class="badge badge-removed">Revoked</span>
+                    <% } else if (expired) { %><span class="badge badge-pending">Expired</span>
+                    <% } else { %><span class="badge badge-published">Active</span><% } %>
+                  </td>
+                  <td><%= k.uses %></td>
+                  <td class="text-faint"><%= k.expires_at ? new Date(k.expires_at).toLocaleDateString() : 'Never' %></td>
+                  <td class="text-faint"><%= k.note || '—' %></td>
+                  <td>
+                    <form action="/dashboard/keys/<%= k.id %>/revoke" method="POST">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button type="submit" class="btn <%= k.status === 'revoked' ? 'btn-outline' : 'btn-danger' %> btn-sm"><%= k.status === 'revoked' ? 'Restore' : 'Revoke' %></button>
+                    </form>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+<%- include('partials/account_foot') %>
