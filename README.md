@@ -1,6 +1,6 @@
 # luvenn
 
-A script publishing platform: users create accounts and publish their own Roblox scripts, raw script text is only served to non-browser (executor) clients, and you moderate everything from a separate admin panel.
+A script publishing platform in the spirit of Luarmor: register, publish a script, and get back a single loader link. Every script is run through multiple layers of obfuscation on our own servers before it's ever served — no third-party APIs involved. Plain accounts only, no admin roles.
 
 Built with **Node.js + Express**, **EJS** templates, and **Neon (Postgres)** for the database.
 
@@ -8,26 +8,31 @@ Built with **Node.js + Express**, **EJS** templates, and **Neon (Postgres)** for
 
 ## Features
 
-- **Accounts** — register/login, bcrypt-hashed passwords (12 rounds), sessions stored in Postgres (not memory, so they survive restarts/redeploys).
-- **Account dashboard** — a sidebar app (`/dashboard`) with Overview (stats + recent scripts + quick actions), My Scripts (filterable: all/published/unpublished/key system), Add Script, and Performance (per-script views/fetches).
-- **Publish scripts** — any logged-in user can publish, edit, unpublish, or delete their own scripts.
-- **Protection layer** — raw script text is only served at `/raw/<id>.lua` to requests whose `User-Agent` doesn't look like a browser. Regular browsers get a `403`. **Source code is never shown anywhere on the public site** — not on the script page, not in listings. Only the loadstring is shown, and only the script's own owner sees the code, in their own edit form.
-- **Admin panel** — a sidebar app at `/admin`. There's no separate admin login: if your account has `is_admin = TRUE` in the database, logging in normally is enough, and an "Admin" link appears in your nav/dashboard. Non-admins get a plain 404 on `/admin*`. From there you can see stats, feature/unpublish/remove/delete any script, and ban/unban users.
+- **Accounts** — register/login, bcrypt-hashed passwords (12 rounds), sessions stored in Postgres (not memory, so they survive restarts/redeploys). No roles, no admin panel — every account works the same way.
+- **Real obfuscation, built in-house** (`lib/obfuscate.js`) — on every publish/edit:
+  1. A hand-rolled Lua tokenizer strips comments and minifies whitespace, correctly aware of short strings, long strings (`[[ ]]` / `[=[ ]=]`), and both comment styles.
+  2. Every string literal is re-encoded as a `string.char(...)` byte reconstruction — no literal text ships in the output.
+  3. The entire result is XOR-encrypted with a random per-script key and base64-encoded.
+  4. A small bootstrap loader — with fresh, randomized variable names on every publish/edit — decodes and runs it via `loadstring()`.
+  This is verified against a real Lua interpreter in `test_obfuscate.js`-style checks during development (run `lua5.1` locally if you want to re-verify after changing `lib/obfuscate.js`).
+- **Loader links** — every script gets a URL shaped like Luarmor's: `/files/v3/loaders/<32-char-id>.lua`. The endpoint only serves non-browser User-Agents (browsers get a 403); every hit — served or blocked — is logged to `fetch_events` for the dashboard chart.
+- **Source is never shown publicly** — not on the script's page, not in any listing. Only the script's own owner sees it, in their own edit form.
+- **Dashboard** (`/dashboard`) — stat tiles (total executions, total views, scripts protected, blocked fetches), a real 30-day execution chart rendered server-side as inline SVG (no charting library), and a script table with Loader / Edit / Delete actions and an auto-incrementing version number.
 - **Security**
   - Parameterized SQL everywhere (no string-built queries → no SQL injection).
   - CSRF tokens on every state-changing form.
   - `helmet` security headers + a strict Content-Security-Policy.
-  - Rate limiting on login, registration, publishing, and raw script fetches.
+  - Rate limiting on login, registration, publishing, and the loader endpoint.
   - HttpOnly, SameSite, Secure (in production) session cookies.
   - Constant-shape login responses so you can't enumerate valid usernames.
-- **Design** — black/white theme with a blue accent, fully custom SVG icon set (no icon library), a sidebar app shell for the dashboard/admin areas, responsive layout.
+- **Design** — navy background with a gold accent, fully custom SVG icon set (no icon library), a sidebar dashboard shell, responsive layout.
 
 ---
 
 ## 1. Set up Neon (the database)
 
 1. Go to [neon.tech](https://neon.tech) and create a free project.
-2. In the Neon dashboard, open **Connection Details** and copy the **pooled connection string** (it looks like `postgresql://user:pass@ep-xxxx-pooler.region.aws.neon.tech/neondb?sslmode=require`).
+2. In the Neon dashboard, open **Connection Details** and copy the **pooled connection string**.
 3. Copy `.env.example` to `.env` and paste that connection string into `DATABASE_URL`.
 
 ## 2. Configure environment variables
@@ -36,13 +41,12 @@ Built with **Node.js + Express**, **EJS** templates, and **Neon (Postgres)** for
 cp .env.example .env
 ```
 
-Fill in `.env`:
-
 | Variable | Description |
 |---|---|
 | `DATABASE_URL` | Your Neon pooled connection string |
 | `SESSION_SECRET` | A long random string — generate with `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
-| `SITE_URL` | `https://luvenn.xyz` in production |
+| `SITE_URL` | `https://luvenn.xyz` in production — used to build loader links |
+| `DISCORD_INVITE_URL` | Your Discord invite link, shown in the nav/footer |
 | `NODE_ENV` | `production` when deployed (enables secure cookies) |
 
 ## 3. Install & migrate
@@ -52,17 +56,7 @@ npm install
 npm run migrate    # creates all tables in Neon from db/schema.sql
 ```
 
-## 4. Make yourself admin
-
-There is deliberately no signup checkbox or API for this. After you register your own account normally on the site, open the **Neon SQL editor** and run:
-
-```sql
-UPDATE users SET is_admin = TRUE WHERE username_lower = 'yourusername';
-```
-
-Now `/admin/login` will accept that account's normal username/password.
-
-## 5. Run it
+## 4. Run it
 
 ```bash
 npm start
@@ -70,53 +64,53 @@ npm start
 
 Visit `http://localhost:3000`.
 
-## 6. Deploy
+## 5. Deploy
 
-This is a standard long-running Express app (it uses `express-session` + Postgres, not serverless functions), so deploy it anywhere that runs a persistent Node process: **Render, Railway, Fly.io, a VPS, or Vercel's Node.js server runtime.** Set the same environment variables there, point your `luvenn.xyz` domain at it, and run `npm run migrate` once against the same `DATABASE_URL` before first use.
+This is a standard long-running Express app (uses `express-session` + Postgres, not serverless functions), so deploy it anywhere that runs a persistent Node process: Render, Railway, Fly.io, a VPS, or Vercel's Node.js server runtime. Set the same environment variables there, point your domain at it, and run `npm run migrate` once against the same `DATABASE_URL` before first use.
 
 ---
 
-## How the executor-only protection works
+## How the loader protection works
 
-When someone requests `/raw/<id>.lua`:
-- If the `User-Agent` header matches common browser signatures (Chrome, Firefox, Safari, Edge, etc.) → `403 Forbidden`, plain text, no script body.
-- Otherwise (a Roblox executor calling `game:HttpGet`, which sends a short or absent UA) → the raw Lua is returned as `text/plain`.
+When someone requests `/files/v3/loaders/<id>.lua`:
+- If the `User-Agent` looks like a browser (Chrome, Firefox, Safari, Edge, etc.) → `403 Forbidden`, and the attempt is logged as a "blocked" fetch event (shown in your dashboard's Blocked fetches stat).
+- Otherwise (a Roblox executor calling `game:HttpGet`) → the *protected* (obfuscated) version of the script is returned as `text/plain`, and the hit is logged as a "fetch" event, which is what powers the execution chart.
 
-This is one layer, not the only one — User-Agent can technically be spoofed, so it's paired with per-route rate limiting and public IDs that aren't guessable (random 10-character tokens), rather than sequential integers.
+User-Agent checks alone can be spoofed, so this is one layer among several: loader IDs are unguessable 32-character random hex strings (not sequential), every hit is rate-limited, and — most importantly — the file served is never the original source, only the obfuscated output.
 
 ## Project structure
 
 ```
 luvenn/
 ├── server.js              # app entry point, middleware wiring
+├── lib/
+│   └── obfuscate.js         # the obfuscation engine (tokenizer + string encoder + XOR/base64 loader)
 ├── db/
 │   ├── schema.sql          # full Postgres schema
 │   ├── index.js            # connection pool + query helper
 │   └── migrate.js          # applies schema.sql
 ├── middleware/
-│   ├── auth.js             # session user loader, requireAuth, requireAdmin
+│   ├── auth.js             # session user loader, requireAuth
 │   ├── csrf.js              # CSRF token issuing + verification
 │   └── security.js         # rate limiters
 ├── routes/
 │   ├── auth.js              # register / login / logout
-│   ├── scripts.js           # homepage, script detail, raw serving
-│   ├── dashboard.js         # account area: overview, my scripts, analytics, publish/edit
-│   └── admin.js              # admin area: overview, all scripts, users
+│   ├── scripts.js           # landing page, script/loader page, /files/v3/loaders/*.lua, docs, faq
+│   └── dashboard.js         # dashboard (stats + chart + table), publish/edit (runs obfuscate()), profile
 ├── views/                   # EJS templates
 │   └── partials/
 │       ├── head.ejs / nav.ejs / footer.ejs      # public site shell
-│       ├── account_head.ejs / account_foot.ejs  # /dashboard sidebar shell
-│       └── admin_head.ejs / admin_foot.ejs      # /admin sidebar shell
+│       └── account_head.ejs / account_foot.ejs  # /dashboard sidebar shell
 ├── public/
-│   ├── css/style.css        # public site theme (black/white/blue)
-│   ├── css/dash.css         # shared sidebar app shell (dashboard + admin)
+│   ├── css/style.css        # public site theme (navy + gold)
+│   ├── css/dash.css         # dashboard sidebar shell
 │   ├── js/main.js
 │   └── icons/sprite.svg     # custom icon set
 └── utils.js
 ```
 
-## What you'll still want to decide
+## Known limitations
 
-- **Content moderation policy** — the admin tools (unpublish/remove/ban) are in place, but the actual rules for what's allowed on your platform are up to you.
-- **Rate limit numbers** in `middleware/security.js` are reasonable starting points — tune them to your traffic.
-- **Invite-only registration** is supported (`REQUIRE_INVITE_CODE=true` + `INVITE_CODE` in `.env`) if you want to gate signups.
+- The obfuscator round-trips all standard Lua escapes correctly (`\n`, `\t`, `\xNN`, `\ddd`, etc.) and both string styles, verified against a real Lua interpreter — but Luau's backtick string-interpolation syntax isn't specially recognized, so literals inside `` `...` `` pass through unobfuscated (the script still runs correctly, that particular literal just isn't string-encoded).
+- The execution chart and stats are real, computed from a `fetch_events` table that grows with usage — for a high-traffic deployment you'd want to add periodic pruning of old rows, which isn't included here.
+- There's no payment/licensing system — publishing is free and unlimited; the stat tiles show real counts, not usage caps.

@@ -9,15 +9,6 @@ const authLimiter = rateLimit({
   message: { error: 'Too many attempts. Please wait a few minutes and try again.' },
 });
 
-// Separate, stricter limiter for the admin login page.
-const adminLoginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 5,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Too many attempts. Please wait a few minutes and try again.' },
-});
-
 // Prevents spam-publishing of scripts.
 const publishLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
@@ -45,7 +36,6 @@ const rawFetchLimiter = rateLimit({
 
 module.exports = {
   authLimiter,
-  adminLoginLimiter,
   publishLimiter,
   generalLimiter,
   rawFetchLimiter,

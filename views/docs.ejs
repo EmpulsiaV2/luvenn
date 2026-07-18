@@ -1,0 +1,32 @@
+<%- include('partials/head') %>
+<main>
+  <div class="container" style="max-width:760px;padding-top:40px;padding-bottom:60px">
+    <h1 style="font-size:32px;margin-bottom:8px">Docs</h1>
+    <p class="text-dim mb-24">Everything you need to publish and use a protected loader link.</p>
+
+    <div class="card mb-24">
+      <h3 style="font-size:16px;margin-bottom:10px">1. Publish a script</h3>
+      <p>From your <a href="/dashboard" style="color:var(--gold)">dashboard</a>, click <strong>Add script</strong> and paste your Lua source. On save, it's automatically run through luvenn's obfuscation pipeline &mdash; comments and whitespace stripped, every string literal re-encoded, and the whole payload wrapped in an XOR + base64 encrypted loader with randomized internals.</p>
+    </div>
+
+    <div class="card mb-24">
+      <h3 style="font-size:16px;margin-bottom:10px">2. Get your loader link</h3>
+      <p>Every script gets a loader URL in this format:</p>
+      <div class="loadstring-box" style="margin-top:10px">
+        <span>loadstring(game:HttpGet("<%= siteUrl %>/files/v3/loaders/&lt;id&gt;.lua"))()</span>
+      </div>
+      <p style="margin-top:12px">Drop that line into any Roblox executor. The endpoint only serves non-browser requests &mdash; opening it in a normal browser returns a 403.</p>
+    </div>
+
+    <div class="card mb-24">
+      <h3 style="font-size:16px;margin-bottom:10px">3. Track executions</h3>
+      <p>Your dashboard shows total views, total executions, scripts protected, and blocked fetch attempts, plus a 30-day execution chart, updated in real time as your loader link is used.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:16px;margin-bottom:10px">4. Editing a published script</h3>
+      <p>Source is stored so only you can edit it later &mdash; it's never shown anywhere else on the site, including to other visitors. Every save bumps the script's version number and regenerates a brand new protected loader.</p>
+    </div>
+  </div>
+</main>
+<%- include('partials/footer') %>

@@ -2,74 +2,60 @@
 <main>
   <section class="hero">
     <div class="container">
-      <h1>Roblox scripts,<br>built for <span class="accent">executors</span>.</h1>
-      <p>Publish your own scripts, browse what the community is building, and pull any of it straight into your executor with a single loadstring.</p>
+      <h1>Protect your code<br>with <span class="accent">luvenn</span></h1>
+      <p>Publish Roblox scripts through a single loader link. Every script is run through multiple layers of obfuscation before it ever leaves our servers &mdash; no third-party APIs involved.</p>
 
       <div class="hero-actions">
-        <% if (!user) { %>
-          <a href="/register" class="btn btn-primary">
-            <svg class="icon"><use href="#icon-user"></use></svg>Create account
-          </a>
+        <% if (user) { %>
+          <a href="/dashboard" class="btn btn-primary"><svg class="icon"><use href="#icon-dashboard"></use></svg>Go to dashboard</a>
         <% } else { %>
-          <a href="/dashboard/new" class="btn btn-primary">
-            <svg class="icon"><use href="#icon-plus"></use></svg>Publish a script
-          </a>
+          <a href="/register" class="btn btn-primary"><svg class="icon"><use href="#icon-user"></use></svg>Get started</a>
         <% } %>
-        <a href="#browse" class="btn btn-outline">
-          <svg class="icon"><use href="#icon-script"></use></svg>Browse scripts
-        </a>
-      </div>
-
-      <form class="search-bar" action="/" method="GET">
-        <svg class="icon"><use href="#icon-search"></use></svg>
-        <input type="text" name="q" value="<%= search %>" placeholder="Search by script or game name...">
-        <% if (category) { %><input type="hidden" name="category" value="<%= category %>"><% } %>
-      </form>
-
-      <div class="pills">
-        <a href="/?<%= search ? 'q=' + encodeURIComponent(search) + '&' : '' %>" class="pill <%= !category ? 'active' : '' %>">All</a>
-        <% categories.forEach(function(c) { %>
-          <a href="/?category=<%= c %><%= search ? '&q=' + encodeURIComponent(search) : '' %>" class="pill <%= category === c ? 'active' : '' %>"><%= c %></a>
-        <% }); %>
+        <a href="/docs" class="btn btn-outline"><svg class="icon"><use href="#icon-external"></use></svg>Read the docs</a>
       </div>
     </div>
   </section>
 
-  <% if (featured.length && !search && !category) { %>
   <section class="section">
     <div class="container">
-      <div class="section-title">
-        <h2><svg class="icon" style="color:var(--blue)"><use href="#icon-star"></use></svg>&nbsp; Featured</h2>
-        <span class="sub">Hand-picked by the luvenn team</span>
-      </div>
-      <div class="grid">
-        <% featured.forEach(function(s) { %>
-          <%- include('partials/script_card', { s: s, timeAgo: timeAgo }) %>
-        <% }); %>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><svg class="icon"><use href="#icon-shield"></use></svg></div>
+          <h3>Multi-layer obfuscation</h3>
+          <p>Every publish runs your source through comment stripping, string encoding, and an XOR + base64 encrypted loader &mdash; generated fresh, with randomized internals, on every save.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon c-blue"><svg class="icon"><use href="#icon-key"></use></svg></div>
+          <h3>Loader links</h3>
+          <p>Every script gets a single <code>loadstring</code> URL. Source is never displayed anywhere on the site &mdash; not even to you, outside your own edit form.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon c-green"><svg class="icon"><use href="#icon-eye"></use></svg></div>
+          <h3>Real execution stats</h3>
+          <p>Track views, executor loads, and blocked browser requests per script, with a live chart of daily executions on your dashboard.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon c-rose"><svg class="icon"><use href="#icon-ban"></use></svg></div>
+          <h3>Browser-blocked delivery</h3>
+          <p>The loader endpoint only serves executors &mdash; regular browsers requesting your script's raw file are turned away and logged.</p>
+        </div>
       </div>
     </div>
   </section>
-  <% } %>
 
-  <section class="section" id="browse">
+  <section class="section">
     <div class="container">
-      <div class="section-title">
-        <h2>Browse scripts</h2>
-        <span class="sub"><%= scripts.length %> result<%= scripts.length === 1 ? '' : 's' %></span>
+      <div class="cta-banner">
+        <div>
+          <h2>Ready to protect your first script?</h2>
+          <p>Create an account and publish in under a minute.</p>
+        </div>
+        <% if (user) { %>
+          <a href="/dashboard/new" class="btn btn-primary"><svg class="icon"><use href="#icon-plus"></use></svg>Add a script</a>
+        <% } else { %>
+          <a href="/register" class="btn btn-primary"><svg class="icon"><use href="#icon-user"></use></svg>Create free account</a>
+        <% } %>
       </div>
-
-      <% if (scripts.length === 0) { %>
-        <div class="empty-state">
-          <svg class="icon"><use href="#icon-script"></use></svg>
-          <p>No scripts found. <% if (search || category) { %>Try a different search.<% } else { %>Be the first to publish one.<% } %></p>
-        </div>
-      <% } else { %>
-        <div class="grid">
-          <% scripts.forEach(function(s) { %>
-            <%- include('partials/script_card', { s: s, timeAgo: timeAgo }) %>
-          <% }); %>
-        </div>
-      <% } %>
     </div>
   </section>
 </main>

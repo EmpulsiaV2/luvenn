@@ -1,0 +1,129 @@
+<%- include('partials/account_head') %>
+      <h1>Dashboard</h1>
+      <p class="lead">Your hub at a glance.</p>
+
+      <div class="stat-tiles">
+        <div class="stat-tile">
+          <div class="stat-chip c-green"><svg class="icon"><use href="#icon-layers"></use></svg></div>
+          <div>
+            <div class="num"><%= stats.total_fetches %></div>
+            <div class="label">Total executions</div>
+          </div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-blue"><svg class="icon"><use href="#icon-eye"></use></svg></div>
+          <div>
+            <div class="num"><%= stats.total_views %></div>
+            <div class="label">Total views</div>
+          </div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-violet"><svg class="icon"><use href="#icon-shield"></use></svg></div>
+          <div>
+            <div class="num"><%= stats.script_count %></div>
+            <div class="label">Scripts protected</div>
+          </div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-rose"><svg class="icon"><use href="#icon-ban"></use></svg></div>
+          <div>
+            <div class="num"><%= stats.total_blocked %></div>
+            <div class="label">Blocked fetches</div>
+          </div>
+        </div>
+      </div>
+
+      <%
+        const cw = 900, ch = 190, padL = 6, padR = 6, padT = 8, padB = 26;
+        const maxCount = Math.max(1, ...series.map(p => p.count));
+        const stepX = series.length > 1 ? (cw - padL - padR) / (series.length - 1) : 0;
+        const pts = series.map((p, i) => {
+          const x = padL + i * stepX;
+          const y = padT + (ch - padT - padB) * (1 - p.count / maxCount);
+          return { x, y, label: p.label };
+        });
+        const linePoints = pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+        const gridYs = [0, 0.25, 0.5, 0.75, 1].map(f => padT + (ch - padT - padB) * f);
+        const gridVals = [maxCount, Math.round(maxCount*0.75), Math.round(maxCount*0.5), Math.round(maxCount*0.25), 0];
+        const labelEvery = Math.ceil(series.length / 10);
+      %>
+
+      <div class="chart-card">
+        <svg viewBox="0 0 <%= cw %> <%= ch + 22 %>" preserveAspectRatio="none">
+          <% gridYs.forEach(function(gy, idx) { %>
+            <line x1="<%= padL %>" y1="<%= gy %>" x2="<%= cw - padR %>" y2="<%= gy %>" stroke="var(--border-soft)" stroke-width="1" stroke-dasharray="3,4" />
+            <text x="0" y="<%= gy + 4 %>" font-size="10" fill="var(--text-faint)"><%= gridVals[idx] %></text>
+          <% }); %>
+          <polyline points="<%= linePoints %>" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" />
+          <% pts.forEach(function(p, i) { if (i % labelEvery === 0 || i === pts.length - 1) { %>
+            <text x="<%= p.x %>" y="<%= ch + 16 %>" font-size="9.5" fill="var(--text-faint)" text-anchor="middle"><%= p.label %></text>
+          <% } }); %>
+        </svg>
+        <div class="chart-foot">
+          <div>
+            <h3>Executions</h3>
+            <p>The number of total executions in the last month</p>
+          </div>
+          <div class="chart-updated"><svg class="icon"><use href="#icon-clock"></use></svg>just updated · <%= monthTotal %> this month</div>
+        </div>
+      </div>
+
+      <div class="dash-panel">
+        <div class="dash-scripts-head">
+          <div class="id-line">
+            <div class="avatar"><svg class="icon"><use href="#icon-script"></use></svg></div>
+            <div>
+              <h3>My scripts</h3>
+              <div class="sub"><%= user.username %></div>
+            </div>
+          </div>
+          <a href="/dashboard/new" class="btn btn-primary btn-sm"><svg class="icon"><use href="#icon-plus"></use></svg>Add script</a>
+        </div>
+
+        <% if (scripts.length === 0) { %>
+          <div class="dash-empty">
+            <svg class="icon"><use href="#icon-script"></use></svg>
+            <p>You haven't published anything yet.</p>
+            <a href="/dashboard/new" class="btn btn-primary btn-sm" style="margin-top:10px"><svg class="icon"><use href="#icon-plus"></use></svg>Add your first script</a>
+          </div>
+        <% } else { %>
+          <div class="table-wrap" style="border:none;border-radius:0">
+            <table>
+              <thead><tr><th>Script name</th><th>Status</th><th>Version</th><th>Actions</th></tr></thead>
+              <tbody>
+                <% scripts.forEach(function(s) { %>
+                  <% const loadstring = 'loadstring(game:HttpGet("' + siteUrl + '/files/v3/loaders/' + s.public_id + '.lua"))()'; %>
+                  <tr>
+                    <td>
+                      <div class="flex gap-12" style="align-items:center">
+                        <div class="avatar" style="width:30px;height:30px;border-radius:7px"><svg class="icon" style="width:14px;height:14px"><use href="#icon-script"></use></svg></div>
+                        <div>
+                          <a href="/script/<%= s.public_id %>" style="font-weight:600;display:block"><%= s.title %></a>
+                          <span class="text-faint" style="font-size:11.5px;font-family:var(--mono)"><%= s.public_id %></span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <% if (s.status === 'published') { %><span class="badge badge-published">Active</span>
+                      <% } else if (s.status === 'pending') { %><span class="badge badge-pending">Draft</span>
+                      <% } else { %><span class="badge badge-removed">Removed</span><% } %>
+                    </td>
+                    <td class="text-dim mono">v<%= s.version %></td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="btn btn-outline-success btn-sm" data-copy="<%= loadstring %>"><svg class="icon"><use href="#icon-download"></use></svg>Loader</button>
+                        <a href="/dashboard/edit/<%= s.id %>" class="btn btn-blue btn-sm"><svg class="icon"><use href="#icon-edit"></use></svg>Edit</a>
+                        <form action="/dashboard/delete/<%= s.id %>" method="POST" data-confirm="Delete '<%= s.title %>' permanently?">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <button type="submit" class="btn btn-danger btn-sm"><svg class="icon"><use href="#icon-trash"></use></svg>Delete</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+<%- include('partials/account_foot') %>

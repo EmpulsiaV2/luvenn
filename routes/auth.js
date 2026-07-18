@@ -54,7 +54,7 @@ router.post('/register', requireGuest, authLimiter, async (req, res, next) => {
 
     const { rows } = await query(
       `INSERT INTO users (username, username_lower, email, password_hash)
-       VALUES ($1, $2, $3, $4) RETURNING id, username, is_admin`,
+       VALUES ($1, $2, $3, $4) RETURNING id, username`,
       [username, usernameLower, emailLower, passwordHash]
     );
 

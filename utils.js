@@ -1,12 +1,9 @@
 const crypto = require('crypto');
 
-// Short, URL-safe random id for public script links (e.g. /raw/aB3xK9qLmZ.lua)
-function generatePublicId(len = 10) {
-  return crypto
-    .randomBytes(len)
-    .toString('base64')
-    .replace(/[^a-zA-Z0-9]/g, '')
-    .slice(0, len);
+// Loader IDs look like Luarmor's: a 32-character lowercase hex string,
+// e.g. 9b1237493f9953a3a353d2384fac0bba0
+function generatePublicId() {
+  return crypto.randomBytes(16).toString('hex');
 }
 
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
@@ -20,12 +17,10 @@ function isValidEmail(e) {
   return typeof e === 'string' && e.length <= 255 && EMAIL_RE.test(e);
 }
 
-// Heuristic User-Agent check used by the "protection" layer on /raw/*.lua.
-// Real browsers announce Mozilla/Chrome/Safari/Firefox/Edge tokens. Roblox
-// executors typically send a short or absent UA, or an explicit "Roblox" token.
-// This is not perfect (UA can be spoofed) — it's one layer, not the only one;
-// the real gate is that raw script text is only useful with a valid loadstring
-// URL, and every fetch is logged/rate-limited server-side.
+// Heuristic User-Agent check used by the loader endpoint. Real browsers
+// announce Mozilla/Chrome/Safari/Firefox/Edge tokens. Roblox executors
+// typically send a short or absent UA. Not unspoofable on its own — it's
+// one layer, paired with unguessable 32-char IDs and rate limiting.
 const BROWSER_UA_PATTERNS = [/mozilla/i, /chrome/i, /safari/i, /firefox/i, /edg\//i, /opera/i, /msie/i, /trident/i];
 
 function looksLikeBrowser(userAgent) {
@@ -49,6 +44,15 @@ function timeAgo(date) {
   return 'just now';
 }
 
+// Scripts start at 0.0.1 and bump their patch number on every edit,
+// e.g. "0.0.1" -> "0.0.2" -> "0.0.3".
+function bumpPatchVersion(version) {
+  const parts = String(version || '0.0.0').split('.').map((n) => parseInt(n, 10) || 0);
+  while (parts.length < 3) parts.push(0);
+  parts[2] += 1;
+  return parts.join('.');
+}
+
 const CATEGORIES = ['universal', 'game-specific', 'gui', 'admin', 'other'];
 
 module.exports = {
@@ -57,5 +61,6 @@ module.exports = {
   isValidEmail,
   looksLikeBrowser,
   timeAgo,
+  bumpPatchVersion,
   CATEGORIES,
 };

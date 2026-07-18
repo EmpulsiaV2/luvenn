@@ -1,0 +1,33 @@
+<%- include('partials/head') %>
+<main>
+  <div class="container" style="max-width:760px;padding-top:40px;padding-bottom:60px">
+    <h1 style="font-size:32px;margin-bottom:8px">F.A.Q</h1>
+    <p class="text-dim mb-24">Common questions about publishing and protection.</p>
+
+    <div class="card mb-24">
+      <h3 style="font-size:15.5px;margin-bottom:8px">Is my source code visible to anyone?</h3>
+      <p>No. Your original source is only ever shown to you, in your own edit form. Everyone else &mdash; including other visitors and anyone using your loader link &mdash; only ever sees the obfuscated output.</p>
+    </div>
+
+    <div class="card mb-24">
+      <h3 style="font-size:15.5px;margin-bottom:8px">What does the obfuscation actually do?</h3>
+      <p>Every publish strips comments and whitespace, re-encodes every string literal as a byte sequence, then encrypts the whole result with a random XOR key and base64, wrapped in a small loader with randomized variable names. It all runs on our own servers &mdash; no third-party obfuscation APIs are used.</p>
+    </div>
+
+    <div class="card mb-24">
+      <h3 style="font-size:15.5px;margin-bottom:8px">Why does my raw loader link 403 in my browser?</h3>
+      <p>That's intentional. The loader endpoint only serves non-browser requests (like a Roblox executor's <code>HttpGet</code>). Opening it directly in Chrome, Firefox, Safari, or similar will always be blocked.</p>
+    </div>
+
+    <div class="card mb-24">
+      <h3 style="font-size:15.5px;margin-bottom:8px">Can I edit a script after publishing?</h3>
+      <p>Yes, any time, from your dashboard. Each save regenerates the protected output and bumps the version number.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:15.5px;margin-bottom:8px">Is there a paid tier?</h3>
+      <p>No, publishing on luvenn is free.</p>
+    </div>
+  </div>
+</main>
+<%- include('partials/footer') %>

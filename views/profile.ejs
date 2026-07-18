@@ -1,0 +1,46 @@
+<%- include('partials/account_head') %>
+      <h1>Profile</h1>
+      <p class="lead">Manage your account.</p>
+
+      <% if (error) { %>
+        <div class="alert alert-error mt-24"><svg class="icon"><use href="#icon-x"></use></svg><%= error %></div>
+      <% } %>
+      <% if (success) { %>
+        <div class="alert alert-success mt-24"><svg class="icon"><use href="#icon-check"></use></svg><%= success %></div>
+      <% } %>
+
+      <div class="card mt-24" style="max-width:520px">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" value="<%= user.username %>" disabled>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="text" value="<%= user.email %>" disabled>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Member since</label>
+          <input type="text" value="<%= new Date(user.created_at).toLocaleDateString() %>" disabled>
+        </div>
+      </div>
+
+      <div class="card mt-24" style="max-width:520px">
+        <h3 style="font-size:15px;margin-bottom:16px">Change password</h3>
+        <form action="/dashboard/profile/password" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group">
+            <label for="current_password">Current password</label>
+            <input type="password" id="current_password" name="current_password" autocomplete="current-password" required>
+          </div>
+          <div class="form-group">
+            <label for="new_password">New password</label>
+            <input type="password" id="new_password" name="new_password" autocomplete="new-password" required>
+          </div>
+          <div class="form-group">
+            <label for="confirm_password">Confirm new password</label>
+            <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Update password</button>
+        </form>
+      </div>
+<%- include('partials/account_foot') %>

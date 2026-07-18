@@ -14,7 +14,6 @@ const { generalLimiter } = require('./middleware/security');
 const authRoutes = require('./routes/auth');
 const scriptRoutes = require('./routes/scripts');
 const dashboardRoutes = require('./routes/dashboard');
-const adminRoutes = require('./routes/admin');
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -72,19 +71,19 @@ app.use(csrfToken);
 app.use((req, res, next) => {
   res.locals.siteName = process.env.SITE_NAME || 'luvenn';
   res.locals.siteUrl = process.env.SITE_URL || 'https://luvenn.xyz';
+  res.locals.discordInvite = process.env.DISCORD_INVITE_URL || 'https://discord.gg/';
   res.locals.path = req.path;
   next();
 });
 
-// CSRF check applies to all POST/PUT/PATCH/DELETE EXCEPT the raw script
-// fetch route (that one is GET-only and unauthenticated by design, hit by
+// CSRF check applies to all POST/PUT/PATCH/DELETE EXCEPT the loader
+// endpoint (that one is GET-only and unauthenticated by design, hit by
 // game executors, not browsers submitting forms).
 app.use(csrfProtect);
 
 app.use(scriptRoutes);
 app.use(authRoutes);
 app.use(dashboardRoutes);
-app.use(adminRoutes);
 
 app.use((req, res) => {
   res.status(404).render('error', { title: 'Not found', message: "This page doesn't exist." });
