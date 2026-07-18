@@ -1,0 +1,67 @@
+<%- include('partials/account_head') %>
+      <h1>Welcome back, <%= user.username %></h1>
+      <p class="lead">Here's how your scripts are doing.</p>
+
+      <div class="stat-tiles">
+        <div class="stat-tile">
+          <div class="stat-chip c-blue"><svg class="icon"><use href="#icon-layers"></use></svg></div>
+          <div><div class="num"><%= stats.script_count %></div><div class="label">Total scripts</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-green"><svg class="icon"><use href="#icon-check"></use></svg></div>
+          <div><div class="num"><%= stats.published_count %></div><div class="label">Published</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-amber"><svg class="icon"><use href="#icon-list"></use></svg></div>
+          <div><div class="num"><%= stats.pending_count %></div><div class="label">Pending</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-violet"><svg class="icon"><use href="#icon-key"></use></svg></div>
+          <div><div class="num"><%= stats.key_count %></div><div class="label">Key scripts</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-rose"><svg class="icon"><use href="#icon-eye"></use></svg></div>
+          <div><div class="num"><%= stats.total_views %></div><div class="label">Total views</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-blue"><svg class="icon"><use href="#icon-download"></use></svg></div>
+          <div><div class="num"><%= stats.total_fetches %></div><div class="label">Executor fetches</div></div>
+        </div>
+      </div>
+
+      <div class="dash-panel mb-24">
+        <div class="dash-panel-head">
+          <h3><svg class="icon"><use href="#icon-script"></use></svg>Recent scripts</h3>
+          <a href="/dashboard/scripts" class="sub" style="font-size:12.5px">View all →</a>
+        </div>
+        <% scripts.forEach(function(s) { %>
+          <a href="/script/<%= s.public_id %>" class="dash-list-row" style="color:inherit">
+            <span class="row-title"><span class="dot" style="background:<%= s.status === 'published' ? 'var(--success)' : (s.status === 'pending' ? '#ffb020' : 'var(--danger)') %>"></span><%= s.title %></span>
+            <span class="row-sub"><%= timeAgo(s.created_at) %></span>
+          </a>
+        <% }); %>
+        <% if (scripts.length === 0) { %>
+          <div class="dash-empty">
+            <svg class="icon"><use href="#icon-script"></use></svg>
+            <p>You haven't published anything yet.</p>
+            <a href="/dashboard/new" class="btn btn-primary btn-sm" style="margin-top:10px"><svg class="icon"><use href="#icon-plus"></use></svg>Add your first script</a>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="section-title"><h2 style="font-size:15px"><svg class="icon" style="width:15px;height:15px;color:#ffb020;vertical-align:-2px"><use href="#icon-bolt"></use></svg> Quick actions</h2></div>
+      <div class="quick-actions">
+        <a href="/dashboard/new" class="quick-action">
+          <div class="icon-wrap"><svg class="icon"><use href="#icon-plus"></use></svg></div>Add script
+        </a>
+        <a href="/dashboard/new?key=1" class="quick-action">
+          <div class="icon-wrap"><svg class="icon"><use href="#icon-key"></use></svg></div>Add with key
+        </a>
+        <a href="/dashboard/analytics" class="quick-action">
+          <div class="icon-wrap"><svg class="icon"><use href="#icon-list"></use></svg></div>View analytics
+        </a>
+        <a href="/" class="quick-action">
+          <div class="icon-wrap"><svg class="icon"><use href="#icon-external"></use></svg></div>Browse site
+        </a>
+      </div>
+<%- include('partials/account_foot') %>

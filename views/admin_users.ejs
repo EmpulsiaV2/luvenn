@@ -2,10 +2,10 @@
       <h1>Users</h1>
       <p class="lead">Everyone with an account on luvenn.</p>
 
-      <div class="admin-tabs mt-24">
-        <a href="/admin/users" class="admin-tab <%= filter === 'all' ? 'active' : '' %>">All <span class="count">· <%= counts.all_count %></span></a>
-        <a href="/admin/users?filter=admins" class="admin-tab <%= filter === 'admins' ? 'active' : '' %>">Admins <span class="count">· <%= counts.admin_count %></span></a>
-        <a href="/admin/users?filter=banned" class="admin-tab <%= filter === 'banned' ? 'active' : '' %>">Banned <span class="count">· <%= counts.banned_count %></span></a>
+      <div class="dash-tabs mt-24">
+        <a href="/admin/users" class="dash-tab <%= filter === 'all' ? 'active' : '' %>">All <span class="count">· <%= counts.all_count %></span></a>
+        <a href="/admin/users?filter=admins" class="dash-tab <%= filter === 'admins' ? 'active' : '' %>">Admins <span class="count">· <%= counts.admin_count %></span></a>
+        <a href="/admin/users?filter=banned" class="dash-tab <%= filter === 'banned' ? 'active' : '' %>">Banned <span class="count">· <%= counts.banned_count %></span></a>
       </div>
 
       <div class="table-wrap mb-24">

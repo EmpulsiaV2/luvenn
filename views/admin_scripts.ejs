@@ -2,12 +2,12 @@
       <h1>Scripts</h1>
       <p class="lead">Moderate everything published to the platform.</p>
 
-      <div class="admin-tabs mt-24">
-        <a href="/admin/scripts" class="admin-tab <%= filter === 'all' ? 'active' : '' %>">All <span class="count">· <%= counts.all_count %></span></a>
-        <a href="/admin/scripts?filter=published" class="admin-tab <%= filter === 'published' ? 'active' : '' %>">Published <span class="count">· <%= counts.published_count %></span></a>
-        <a href="/admin/scripts?filter=pending" class="admin-tab <%= filter === 'pending' ? 'active' : '' %>">Pending <span class="count">· <%= counts.pending_count %></span></a>
-        <a href="/admin/scripts?filter=key" class="admin-tab <%= filter === 'key' ? 'active' : '' %>">Key system <span class="count">· <%= counts.key_count %></span></a>
-        <a href="/admin/scripts?filter=removed" class="admin-tab <%= filter === 'removed' ? 'active' : '' %>">Removed</a>
+      <div class="dash-tabs mt-24">
+        <a href="/admin/scripts" class="dash-tab <%= filter === 'all' ? 'active' : '' %>">All <span class="count">· <%= counts.all_count %></span></a>
+        <a href="/admin/scripts?filter=published" class="dash-tab <%= filter === 'published' ? 'active' : '' %>">Published <span class="count">· <%= counts.published_count %></span></a>
+        <a href="/admin/scripts?filter=pending" class="dash-tab <%= filter === 'pending' ? 'active' : '' %>">Pending <span class="count">· <%= counts.pending_count %></span></a>
+        <a href="/admin/scripts?filter=key" class="dash-tab <%= filter === 'key' ? 'active' : '' %>">Key system <span class="count">· <%= counts.key_count %></span></a>
+        <a href="/admin/scripts?filter=removed" class="dash-tab <%= filter === 'removed' ? 'active' : '' %>">Removed</a>
       </div>
 
       <div class="table-wrap mb-24">

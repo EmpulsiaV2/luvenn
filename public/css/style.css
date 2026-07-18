@@ -63,6 +63,7 @@ main { flex: 1; }
   position: sticky;
   top: 0;
   z-index: 40;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02);
 }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 66px; }
 .brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 19px; letter-spacing: -0.03em; }
@@ -98,8 +99,8 @@ main { flex: 1; }
   line-height: 1;
 }
 .btn .icon { width: 15px; height: 15px; }
-.btn-primary { background: var(--blue); color: #04101f; }
-.btn-primary:hover { background: #6ba0ff; }
+.btn-primary { background: var(--blue); color: #04101f; box-shadow: 0 4px 14px rgba(77,141,255,0.28); }
+.btn-primary:hover { background: #6ba0ff; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(77,141,255,0.38); }
 .btn-outline { background: transparent; border-color: var(--border); color: var(--text); }
 .btn-outline:hover { border-color: var(--blue-dim); background: var(--blue-glow); }
 .btn-ghost { background: transparent; color: var(--text-dim); }
@@ -117,8 +118,8 @@ main { flex: 1; }
   border-radius: var(--radius-lg);
   padding: 22px;
 }
-.card-hover { transition: border-color .15s, transform .15s; }
-.card-hover:hover { border-color: var(--blue-dim); }
+.card-hover { transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+.card-hover:hover { border-color: var(--blue-dim); transform: translateY(-3px); box-shadow: 0 16px 36px rgba(0,0,0,0.4); }
 
 /* ---------- Hero ---------- */
 .hero { padding: 76px 0 46px; text-align: center; }
@@ -134,7 +135,9 @@ main { flex: 1; }
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px 16px;
+  transition: border-color .18s, box-shadow .18s;
 }
+.search-bar:focus-within { border-color: var(--blue-dim); box-shadow: 0 0 0 4px var(--blue-glow); }
 .search-bar .icon { color: var(--text-faint); width: 17px; height: 17px; flex-shrink: 0; }
 .search-bar input { background: none; border: none; outline: none; color: var(--text); font-size: 14.5px; width: 100%; font-family: var(--font); }
 .search-bar input::placeholder { color: var(--text-faint); }
@@ -146,7 +149,7 @@ main { flex: 1; }
   border: 1px solid var(--border); color: var(--text-dim);
 }
 .pill:hover { border-color: var(--blue-dim); color: var(--text); }
-.pill.active { background: var(--blue); border-color: var(--blue); color: #04101f; }
+.pill.active { background: var(--blue); border-color: var(--blue); color: #04101f; box-shadow: 0 4px 14px rgba(77,141,255,0.28); }
 
 /* ---------- Section ---------- */
 .section { padding: 40px 0; }
@@ -231,12 +234,6 @@ tr:last-child td { border-bottom: none; }
 td.mono { font-family: var(--mono); color: var(--text-dim); font-size: 12.5px; }
 .row-actions { display: flex; gap: 6px; }
 
-/* ---------- Stat cards ---------- */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 30px; }
-.stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
-.stat-card .num { font-size: 26px; font-weight: 800; color: var(--white); }
-.stat-card .label { font-size: 12.5px; color: var(--text-faint); margin-top: 4px; }
-
 /* ---------- Script detail page ---------- */
 .script-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; margin-bottom: 24px; }
 .script-header h1 { font-size: 28px; }
@@ -244,11 +241,6 @@ td.mono { font-family: var(--mono); color: var(--text-dim); font-size: 12.5px; }
   background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px;
   padding: 16px; font-family: var(--mono); font-size: 13px; color: var(--blue);
   word-break: break-all; display: flex; justify-content: space-between; align-items: center; gap: 12px;
-}
-.code-view {
-  background: #0d0d10; border: 1px solid var(--border); border-radius: 12px;
-  padding: 18px; font-family: var(--mono); font-size: 13px; line-height: 1.6;
-  color: #d8d8de; max-height: 480px; overflow: auto; white-space: pre-wrap; word-break: break-word;
 }
 
 /* ---------- Footer ---------- */

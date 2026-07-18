@@ -1,0 +1,43 @@
+<%- include('partials/account_head') %>
+      <h1>Performance</h1>
+      <p class="lead">How your scripts are being viewed and executed.</p>
+
+      <div class="stat-tiles">
+        <div class="stat-tile">
+          <div class="stat-chip c-rose"><svg class="icon"><use href="#icon-eye"></use></svg></div>
+          <div><div class="num"><%= totals.views %></div><div class="label">Total views</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-blue"><svg class="icon"><use href="#icon-download"></use></svg></div>
+          <div><div class="num"><%= totals.fetches %></div><div class="label">Executor fetches</div></div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-chip c-green"><svg class="icon"><use href="#icon-script"></use></svg></div>
+          <div><div class="num"><%= scripts.length %></div><div class="label">Scripts tracked</div></div>
+        </div>
+      </div>
+
+      <% if (scripts.length === 0) { %>
+        <div class="dash-empty">
+          <svg class="icon"><use href="#icon-list"></use></svg>
+          <p>No data yet — publish a script to start tracking performance.</p>
+        </div>
+      <% } else { %>
+        <div class="table-wrap mb-24">
+          <table>
+            <thead><tr><th>Script</th><th>Status</th><th>Views</th><th>Executor fetches</th><th>Published</th></tr></thead>
+            <tbody>
+              <% scripts.forEach(function(s) { %>
+                <tr>
+                  <td><a href="/script/<%= s.public_id %>" style="font-weight:600"><%= s.title %></a></td>
+                  <td><span class="badge badge-<%= s.status %>"><%= s.status %></span></td>
+                  <td><%= s.views %></td>
+                  <td><%= s.fetches %></td>
+                  <td class="text-faint"><%= timeAgo(s.created_at) %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+<%- include('partials/account_foot') %>

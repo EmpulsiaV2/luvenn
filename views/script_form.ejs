@@ -1,64 +1,62 @@
-<%- include('partials/head') %>
-<main>
-  <div class="container" style="max-width:720px;padding-top:36px;padding-bottom:60px">
-    <h1 style="font-size:24px;margin-bottom:6px"><%= mode === 'create' ? 'Publish a script' : 'Edit script' %></h1>
-    <p class="text-dim mb-24">Fields marked with a title and code are required.</p>
+<%- include('partials/account_head') %>
+      <h1><%= mode === 'create' ? 'Add script' : 'Edit script' %></h1>
+      <p class="lead"><%= mode === 'create' ? 'Publish a new script to your account.' : 'Update this script.' %></p>
 
-    <% if (error) { %>
-      <div class="alert alert-error"><svg class="icon"><use href="#icon-x"></use></svg><%= error %></div>
-    <% } %>
+      <% if (error) { %>
+        <div class="alert alert-error mt-24"><svg class="icon"><use href="#icon-x"></use></svg><%= error %></div>
+      <% } %>
 
-    <form action="<%= mode === 'create' ? '/dashboard/new' : '/dashboard/edit/' + script.id %>" method="POST">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="card mt-24" style="max-width:720px">
+        <form action="<%= mode === 'create' ? '/dashboard/new' : '/dashboard/edit/' + script.id %>" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" id="title" name="title" maxlength="80" value="<%= script && script.title ? script.title : '' %>" required>
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" maxlength="80" value="<%= script && script.title ? script.title : '' %>" required>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="3" maxlength="500"><%= script && script.description ? script.description : '' %></textarea>
+          </div>
+
+          <div class="flex gap-12">
+            <div class="form-group" style="flex:1">
+              <label for="game_name">Game name</label>
+              <input type="text" id="game_name" name="game_name" maxlength="100" value="<%= script && script.game_name ? script.game_name : '' %>" placeholder="e.g. Blox Fruits">
+            </div>
+            <div class="form-group" style="flex:1">
+              <label for="category">Category</label>
+              <select id="category" name="category">
+                <% categories.forEach(function(c) { %>
+                  <option value="<%= c %>" <%= script && script.category === c ? 'selected' : '' %>><%= c %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="game_id">Roblox game/place ID (optional)</label>
+            <input type="text" id="game_id" name="game_id" maxlength="40" value="<%= script && script.game_id ? script.game_id : '' %>">
+          </div>
+
+          <div class="form-group">
+            <div class="checkbox-row" style="margin-bottom:10px">
+              <input type="checkbox" id="has_key_system" name="has_key_system" <%= script && script.has_key_system ? 'checked' : '' %> onchange="document.getElementById('key_link_group').style.display = this.checked ? 'block' : 'none'">
+              <label for="has_key_system" style="margin:0">This script requires a key</label>
+            </div>
+            <div id="key_link_group" style="<%= script && script.has_key_system ? '' : 'display:none' %>">
+              <input type="url" name="key_link" placeholder="https://your-key-page.com" value="<%= script && script.key_link ? script.key_link : '' %>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="code">Lua source</label>
+            <textarea id="code" name="code" class="code-input" placeholder="-- paste your script here" required><%= script && script.code ? script.code : '' %></textarea>
+            <div class="help-text">Never displayed on the site. Served raw to executors at <code>/raw/&lt;id&gt;.lua</code>, blocked for browsers.</div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block"><%= mode === 'create' ? 'Publish' : 'Save changes' %></button>
+        </form>
       </div>
-
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea id="description" name="description" rows="3" maxlength="500"><%= script && script.description ? script.description : '' %></textarea>
-      </div>
-
-      <div class="flex gap-12">
-        <div class="form-group" style="flex:1">
-          <label for="game_name">Game name</label>
-          <input type="text" id="game_name" name="game_name" maxlength="100" value="<%= script && script.game_name ? script.game_name : '' %>" placeholder="e.g. Blox Fruits">
-        </div>
-        <div class="form-group" style="flex:1">
-          <label for="category">Category</label>
-          <select id="category" name="category">
-            <% categories.forEach(function(c) { %>
-              <option value="<%= c %>" <%= script && script.category === c ? 'selected' : '' %>><%= c %></option>
-            <% }); %>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="game_id">Roblox game/place ID (optional)</label>
-        <input type="text" id="game_id" name="game_id" maxlength="40" value="<%= script && script.game_id ? script.game_id : '' %>">
-      </div>
-
-      <div class="form-group">
-        <div class="checkbox-row mb-24" style="margin-bottom:10px">
-          <input type="checkbox" id="has_key_system" name="has_key_system" <%= script && script.has_key_system ? 'checked' : '' %> onchange="document.getElementById('key_link_group').style.display = this.checked ? 'block' : 'none'">
-          <label for="has_key_system" style="margin:0">This script requires a key</label>
-        </div>
-        <div id="key_link_group" style="<%= script && script.has_key_system ? '' : 'display:none' %>">
-          <input type="url" name="key_link" placeholder="https://your-key-page.com" value="<%= script && script.key_link ? script.key_link : '' %>">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="code">Lua source</label>
-        <textarea id="code" name="code" class="code-input" placeholder="-- paste your script here" required><%= script && script.code ? script.code : '' %></textarea>
-        <div class="help-text">Served raw to executors at <code>/raw/&lt;id&gt;.lua</code>, blocked for regular browsers.</div>
-      </div>
-
-      <button type="submit" class="btn btn-primary btn-block"><%= mode === 'create' ? 'Publish' : 'Save changes' %></button>
-    </form>
-  </div>
-</main>
-<%- include('partials/footer') %>
+<%- include('partials/account_foot') %>

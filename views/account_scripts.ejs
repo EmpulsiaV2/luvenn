@@ -1,0 +1,57 @@
+<%- include('partials/account_head') %>
+      <div class="flex-between">
+        <div>
+          <h1>My scripts</h1>
+          <p class="lead">Manage everything you've published.</p>
+        </div>
+        <a href="/dashboard/new" class="btn btn-primary"><svg class="icon"><use href="#icon-plus"></use></svg>Add script</a>
+      </div>
+
+      <div class="dash-tabs mt-24">
+        <a href="/dashboard/scripts" class="dash-tab <%= filter === 'all' ? 'active' : '' %>">All <span class="count">· <%= counts.all_count %></span></a>
+        <a href="/dashboard/scripts?filter=published" class="dash-tab <%= filter === 'published' ? 'active' : '' %>">Published <span class="count">· <%= counts.published_count %></span></a>
+        <a href="/dashboard/scripts?filter=pending" class="dash-tab <%= filter === 'pending' ? 'active' : '' %>">Unpublished <span class="count">· <%= counts.pending_count %></span></a>
+        <a href="/dashboard/scripts?filter=key" class="dash-tab <%= filter === 'key' ? 'active' : '' %>">Key system <span class="count">· <%= counts.key_count %></span></a>
+      </div>
+
+      <% if (scripts.length === 0) { %>
+        <div class="dash-empty">
+          <svg class="icon"><use href="#icon-script"></use></svg>
+          <p>Nothing here yet.</p>
+          <a href="/dashboard/new" class="btn btn-primary btn-sm" style="margin-top:10px"><svg class="icon"><use href="#icon-plus"></use></svg>Add a script</a>
+        </div>
+      <% } else { %>
+        <div class="table-wrap mb-24">
+          <table>
+            <thead>
+              <tr><th>Title</th><th>Category</th><th>Status</th><th>Views</th><th>Fetches</th><th>Published</th><th></th></tr>
+            </thead>
+            <tbody>
+              <% scripts.forEach(function(s) { %>
+                <tr>
+                  <td><a href="/script/<%= s.public_id %>" style="font-weight:600"><%= s.title %></a> <% if (s.has_key_system) { %><svg class="icon" style="width:12px;height:12px;color:#ffc107;margin-left:4px"><use href="#icon-key"></use></svg><% } %></td>
+                  <td class="text-dim"><%= s.category %></td>
+                  <td><span class="badge badge-<%= s.status %>"><%= s.status %></span></td>
+                  <td><%= s.views %></td>
+                  <td><%= s.fetches %></td>
+                  <td class="text-faint"><%= timeAgo(s.created_at) %></td>
+                  <td>
+                    <div class="row-actions">
+                      <a href="/dashboard/edit/<%= s.id %>" class="btn btn-outline btn-sm"><svg class="icon"><use href="#icon-edit"></use></svg></a>
+                      <form action="/dashboard/toggle-status/<%= s.id %>" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button type="submit" class="btn btn-outline btn-sm"><%= s.status === 'published' ? 'Unpublish' : 'Publish' %></button>
+                      </form>
+                      <form action="/dashboard/delete/<%= s.id %>" method="POST" data-confirm="Delete '<%= s.title %>' permanently?">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button type="submit" class="btn btn-danger btn-sm"><svg class="icon"><use href="#icon-trash"></use></svg></button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+<%- include('partials/account_foot') %>

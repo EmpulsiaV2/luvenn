@@ -29,33 +29,33 @@
         </div>
       </div>
 
-      <div class="admin-panels">
-        <div class="admin-panel">
-          <div class="admin-panel-head">
+      <div class="dash-panels">
+        <div class="dash-panel">
+          <div class="dash-panel-head">
             <h3><svg class="icon"><use href="#icon-script"></use></svg>Recent scripts</h3>
             <a href="/admin/scripts" class="sub" style="font-size:12.5px">View all →</a>
           </div>
           <% scripts.forEach(function(s) { %>
-            <a href="/script/<%= s.public_id %>" class="admin-list-row" style="color:inherit">
+            <a href="/script/<%= s.public_id %>" class="dash-list-row" style="color:inherit">
               <span class="row-title"><span class="dot" style="background:<%= s.status === 'published' ? 'var(--success)' : (s.status === 'pending' ? '#ffb020' : 'var(--danger)') %>"></span><%= s.title %></span>
               <span class="row-sub"><%= s.username %></span>
             </a>
           <% }); %>
-          <% if (scripts.length === 0) { %><div class="admin-list-row text-faint">No scripts yet.</div><% } %>
+          <% if (scripts.length === 0) { %><div class="dash-list-row text-faint">No scripts yet.</div><% } %>
         </div>
 
-        <div class="admin-panel">
-          <div class="admin-panel-head">
+        <div class="dash-panel">
+          <div class="dash-panel-head">
             <h3><svg class="icon"><use href="#icon-user"></use></svg>Recent users</h3>
             <a href="/admin/users" class="sub" style="font-size:12.5px">View all →</a>
           </div>
           <% users.forEach(function(u) { %>
-            <div class="admin-list-row">
+            <div class="dash-list-row">
               <span class="row-title"><span class="dot" style="background:<%= u.is_banned ? 'var(--danger)' : 'var(--success)' %>"></span><%= u.username %></span>
               <span class="row-sub"><%= u.is_admin ? 'Admin' : timeAgo(u.created_at) %></span>
             </div>
           <% }); %>
-          <% if (users.length === 0) { %><div class="admin-list-row text-faint">No users yet.</div><% } %>
+          <% if (users.length === 0) { %><div class="dash-list-row text-faint">No users yet.</div><% } %>
         </div>
       </div>
 

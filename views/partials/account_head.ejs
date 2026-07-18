@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> · <%= siteName %></title>
+  <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dash.css">
+</head>
+<body>
+<%- include('sprite') %>
+<div class="dash-shell">
+
+  <aside class="dash-sidebar">
+    <div class="dash-brand">
+      <div class="mark"><svg class="icon"><use href="#icon-logo"></use></svg></div>
+      <div>
+        <div class="name"><%= siteName %></div>
+        <div class="subname">Your account</div>
+      </div>
+    </div>
+
+    <nav style="flex:1">
+      <div class="dash-nav-group">
+        <div class="dash-nav-label">Dashboard</div>
+        <a href="/dashboard" class="dash-nav-item <%= active === 'overview' ? 'active' : '' %>">
+          <svg class="icon"><use href="#icon-dashboard"></use></svg><span class="label">Overview</span>
+        </a>
+      </div>
+
+      <div class="dash-nav-group">
+        <div class="dash-nav-label">Scripts</div>
+        <a href="/dashboard/scripts" class="dash-nav-item <%= active === 'scripts' ? 'active' : '' %>">
+          <svg class="icon"><use href="#icon-script"></use></svg><span class="label">My scripts</span>
+          <span class="count"><%= navCounts.scripts %></span>
+        </a>
+        <a href="/dashboard/new" class="dash-nav-item <%= active === 'new' ? 'active' : '' %>">
+          <svg class="icon"><use href="#icon-plus"></use></svg><span class="label">Add script</span>
+        </a>
+      </div>
+
+      <div class="dash-nav-group">
+        <div class="dash-nav-label">Key system</div>
+        <a href="/dashboard/scripts?filter=key" class="dash-nav-item">
+          <svg class="icon"><use href="#icon-key"></use></svg><span class="label">Key scripts</span>
+          <span class="count"><%= navCounts.key_scripts %></span>
+        </a>
+        <a href="/dashboard/new?key=1" class="dash-nav-item">
+          <svg class="icon"><use href="#icon-shield"></use></svg><span class="label">Add with key</span>
+        </a>
+      </div>
+
+      <div class="dash-nav-group">
+        <div class="dash-nav-label">Analytics</div>
+        <a href="/dashboard/analytics" class="dash-nav-item <%= active === 'analytics' ? 'active' : '' %>">
+          <svg class="icon"><use href="#icon-list"></use></svg><span class="label">Performance</span>
+        </a>
+      </div>
+
+      <% if (user.is_admin) { %>
+      <div class="dash-nav-group">
+        <div class="dash-nav-label">Platform</div>
+        <a href="/admin" class="dash-nav-item">
+          <svg class="icon"><use href="#icon-shield"></use></svg><span class="label">Admin panel</span>
+        </a>
+      </div>
+      <% } %>
+    </nav>
+
+    <div class="dash-sidebar-foot">
+      <a href="/" class="btn btn-outline btn-sm btn-block"><svg class="icon"><use href="#icon-external"></use></svg>View site</a>
+      <form action="/logout" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="btn btn-danger btn-sm btn-block"><svg class="icon"><use href="#icon-x"></use></svg>Log out</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="dash-main">
+    <div class="dash-topbar">
+      <div class="dash-breadcrumb">
+        <span>Account</span> <svg class="icon" style="width:12px;height:12px"><use href="#icon-arrow-right"></use></svg> <strong><%= title %></strong>
+      </div>
+      <div class="dash-topbar-right">
+        <span class="text-dim" style="font-size:13px;font-weight:600"><%= user.username %></span>
+      </div>
+    </div>
+
+    <div class="dash-content">

@@ -6,14 +6,14 @@
   <title><%= title %> · <%= siteName %> admin</title>
   <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/dash.css">
 </head>
 <body>
 <%- include('sprite') %>
-<div class="admin-shell">
+<div class="dash-shell">
 
-  <aside class="admin-sidebar">
-    <div class="admin-brand">
+  <aside class="dash-sidebar">
+    <div class="dash-brand">
       <div class="mark"><svg class="icon"><use href="#icon-shield"></use></svg></div>
       <div>
         <div class="name"><%= siteName %> Admin</div>
@@ -22,35 +22,35 @@
     </div>
 
     <nav style="flex:1">
-      <div class="admin-nav-group">
-        <div class="admin-nav-label">Overview</div>
-        <a href="/admin" class="admin-nav-item <%= active === 'overview' ? 'active' : '' %>">
+      <div class="dash-nav-group">
+        <div class="dash-nav-label">Overview</div>
+        <a href="/admin" class="dash-nav-item <%= active === 'overview' ? 'active' : '' %>">
           <svg class="icon"><use href="#icon-dashboard"></use></svg><span class="label">Overview</span>
         </a>
       </div>
 
-      <div class="admin-nav-group">
-        <div class="admin-nav-label">Scripts</div>
-        <a href="/admin/scripts" class="admin-nav-item <%= active === 'scripts' ? 'active' : '' %>">
+      <div class="dash-nav-group">
+        <div class="dash-nav-label">Scripts</div>
+        <a href="/admin/scripts" class="dash-nav-item <%= active === 'scripts' ? 'active' : '' %>">
           <svg class="icon"><use href="#icon-script"></use></svg><span class="label">All scripts</span>
           <span class="count"><%= navCounts.scripts %></span>
         </a>
-        <a href="/admin/scripts?filter=key" class="admin-nav-item">
+        <a href="/admin/scripts?filter=key" class="dash-nav-item">
           <svg class="icon"><use href="#icon-key"></use></svg><span class="label">Key scripts</span>
           <span class="count"><%= navCounts.key_scripts %></span>
         </a>
       </div>
 
-      <div class="admin-nav-group">
-        <div class="admin-nav-label">Community</div>
-        <a href="/admin/users" class="admin-nav-item <%= active === 'users' ? 'active' : '' %>">
+      <div class="dash-nav-group">
+        <div class="dash-nav-label">Community</div>
+        <a href="/admin/users" class="dash-nav-item <%= active === 'users' ? 'active' : '' %>">
           <svg class="icon"><use href="#icon-user"></use></svg><span class="label">Users</span>
           <span class="count"><%= navCounts.users %></span>
         </a>
       </div>
     </nav>
 
-    <div class="admin-sidebar-foot">
+    <div class="dash-sidebar-foot">
       <a href="/" class="btn btn-outline btn-sm btn-block"><svg class="icon"><use href="#icon-external"></use></svg>View site</a>
       <form action="/logout" method="POST">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -59,14 +59,14 @@
     </div>
   </aside>
 
-  <div class="admin-main">
-    <div class="admin-topbar">
-      <div class="admin-breadcrumb">
+  <div class="dash-main">
+    <div class="dash-topbar">
+      <div class="dash-breadcrumb">
         <span>Dashboard</span> <svg class="icon" style="width:12px;height:12px"><use href="#icon-arrow-right"></use></svg> <strong><%= title %></strong>
       </div>
-      <div class="admin-topbar-right">
-        <span class="admin-clock" id="admin-clock"><svg class="icon"><use href="#icon-clock"></use></svg><span id="admin-clock-text">--:--:--</span></span>
+      <div class="dash-topbar-right">
+        <span class="dash-clock" id="dash-clock"><svg class="icon"><use href="#icon-clock"></use></svg><span id="dash-clock-text">--:--:--</span></span>
       </div>
     </div>
 
-    <div class="admin-content">
+    <div class="dash-content">

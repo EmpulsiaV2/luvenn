@@ -9,18 +9,18 @@ Built with **Node.js + Express**, **EJS** templates, and **Neon (Postgres)** for
 ## Features
 
 - **Accounts** — register/login, bcrypt-hashed passwords (12 rounds), sessions stored in Postgres (not memory, so they survive restarts/redeploys).
-- **Publish scripts** — any logged-in user can publish, edit, unpublish, or delete their own scripts from `/dashboard`.
-- **Protection layer** — raw script text is only served at `/raw/<id>.lua` to requests whose `User-Agent` doesn't look like a browser. Regular browsers get a `403`. Every fetch is rate-limited and counted.
-- **Admin panel** — a *separate* login at `/admin/login`. Only accounts with `is_admin = TRUE` in the database can get in — there is no in-app way to grant admin, on purpose. From `/admin` you can see stats, feature/unpublish/remove/delete any script, and ban/unban users.
+- **Account dashboard** — a sidebar app (`/dashboard`) with Overview (stats + recent scripts + quick actions), My Scripts (filterable: all/published/unpublished/key system), Add Script, and Performance (per-script views/fetches).
+- **Publish scripts** — any logged-in user can publish, edit, unpublish, or delete their own scripts.
+- **Protection layer** — raw script text is only served at `/raw/<id>.lua` to requests whose `User-Agent` doesn't look like a browser. Regular browsers get a `403`. **Source code is never shown anywhere on the public site** — not on the script page, not in listings. Only the loadstring is shown, and only the script's own owner sees the code, in their own edit form.
+- **Admin panel** — a sidebar app at `/admin`. There's no separate admin login: if your account has `is_admin = TRUE` in the database, logging in normally is enough, and an "Admin" link appears in your nav/dashboard. Non-admins get a plain 404 on `/admin*`. From there you can see stats, feature/unpublish/remove/delete any script, and ban/unban users.
 - **Security**
   - Parameterized SQL everywhere (no string-built queries → no SQL injection).
   - CSRF tokens on every state-changing form.
   - `helmet` security headers + a strict Content-Security-Policy.
-  - Rate limiting on login, registration, admin login, publishing, and raw script fetches.
+  - Rate limiting on login, registration, publishing, and raw script fetches.
   - HttpOnly, SameSite, Secure (in production) session cookies.
   - Constant-shape login responses so you can't enumerate valid usernames.
-  - Admin panel requires a second, explicit admin-login step even if you're already logged in as a normal user on that browser.
-- **Design** — black/white theme with a blue accent, fully custom SVG icon set (no icon library), responsive layout.
+- **Design** — black/white theme with a blue accent, fully custom SVG icon set (no icon library), a sidebar app shell for the dashboard/admin areas, responsive layout.
 
 ---
 
@@ -100,12 +100,16 @@ luvenn/
 ├── routes/
 │   ├── auth.js              # register / login / logout
 │   ├── scripts.js           # homepage, script detail, raw serving
-│   ├── dashboard.js         # a user's own script CRUD
-│   └── admin.js              # separate admin login + moderation panel
+│   ├── dashboard.js         # account area: overview, my scripts, analytics, publish/edit
+│   └── admin.js              # admin area: overview, all scripts, users
 ├── views/                   # EJS templates
 │   └── partials/
+│       ├── head.ejs / nav.ejs / footer.ejs      # public site shell
+│       ├── account_head.ejs / account_foot.ejs  # /dashboard sidebar shell
+│       └── admin_head.ejs / admin_foot.ejs      # /admin sidebar shell
 ├── public/
-│   ├── css/style.css        # black/white/blue theme
+│   ├── css/style.css        # public site theme (black/white/blue)
+│   ├── css/dash.css         # shared sidebar app shell (dashboard + admin)
 │   ├── js/main.js
 │   └── icons/sprite.svg     # custom icon set
 └── utils.js
